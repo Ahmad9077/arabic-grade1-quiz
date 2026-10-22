@@ -392,7 +392,7 @@ function GapWord({ letters, index, filled }: { letters: string[]; index: number;
   return (
     <span className="gap-word" dir="rtl" aria-hidden="true">
       <span>{pieces.slice(0, index).join('')}</span>
-      <span className={`gap-slot ${filled ? 'is-filled pop' : ''}`}>{filled ? pieces[index] : ''}</span>
+      <span className={`gap-slot ${filled ? 'is-filled pop' : ''}`}>{filled ? pieces[index] : '\u00a0'}</span>
       <span>{pieces.slice(index + 1).join('')}</span>
     </span>
   )

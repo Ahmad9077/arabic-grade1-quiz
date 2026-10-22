@@ -2575,10 +2575,12 @@ p {
   }
 }
 
-/* A word with one letter missing: a dashed slot between its neighbours. */
+/* A word with one letter missing: a dashed slot between its neighbours.
+   The slot shares the word's baseline and is one line tall, so a filled letter
+   sits on the line with its neighbours and its tail stays inside the box. */
 .gap-word {
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
   direction: rtl;
   font-family: var(--font-reading);
   font-weight: 700;
@@ -2587,11 +2589,12 @@ p {
 }
 
 .gap-slot {
-  display: inline-grid;
-  place-items: center;
+  display: inline-block;
   min-width: 0.9em;
-  height: 1.1em;
+  padding-inline: 0.08em;
   margin-inline: 0.04em;
+  line-height: 1.5;
+  text-align: center;
   border: 4px dashed var(--tone);
   border-radius: 16px;
   background: var(--tint);
