@@ -1,0 +1,1096 @@
+{
+  "voices": {
+    "ar": {
+      "id": "w0uhBAmNIG5kUDeaFEsA",
+      "name": "Maryam Essa - Kuwaiti Calm & Warm",
+      "language": "ar"
+    },
+    "fs": {
+      "id": "g3YpdjT1OTh9cunaumJs",
+      "name": "Layla - Modern Arabic",
+      "language": "ar"
+    }
+  },
+  "model": "eleven_v4",
+  "settings": {
+    "stability": 0.5,
+    "similarity_boost": 0.8,
+    "style": 0.2
+  },
+  "clips": {
+    "ar/q/blend": {
+      "text": "شنو الكلمة اللي تتركب من هذي الحروف؟",
+      "hash": "253ed7ea9f5856fb",
+      "durationMs": 3039,
+      "bytes": 24911
+    },
+    "ar/q/copy": {
+      "text": "وين الحرفين نفسهم بالضبط؟",
+      "hash": "9c2e251127a6bee4",
+      "durationMs": 2249,
+      "bytes": 18642
+    },
+    "ar/q/form": {
+      "text": "أي شكل للحرف يكمل الكلمة؟",
+      "hash": "87b6b6db78cbae00",
+      "durationMs": 2659,
+      "bytes": 21776
+    },
+    "ar/q/letter-for-pic": {
+      "text": "بأي حرف تبدأ هذي الكلمة؟",
+      "hash": "82e28900dccf4202",
+      "durationMs": 2296,
+      "bytes": 18851
+    },
+    "ar/q/match-pic": {
+      "text": "نوصل كل حرف بالصورة اللي تبدأ فيه… نبدأ بالحرف.",
+      "hash": "042c51a385c9b81b",
+      "durationMs": 4446,
+      "bytes": 36196
+    },
+    "ar/q/pic-for-letter": {
+      "text": "أي صورة تبدأ بهذا الحرف؟",
+      "hash": "3fb6db558cdc9ae3",
+      "durationMs": 2589,
+      "bytes": 21358
+    },
+    "ar/t/blend": {
+      "text": "نركب الحروف مع بعض… ونقرا الكلمة كاملة.",
+      "hash": "a4c1cc5b7265a2ae",
+      "durationMs": 3774,
+      "bytes": 30763
+    },
+    "ar/t/copy": {
+      "text": "نركز زين في النقاط… ونختار الحرفين نفسهم بالضبط.",
+      "hash": "f7aaa830f5ea07cf",
+      "durationMs": 4647,
+      "bytes": 37659
+    },
+    "ar/t/find": {
+      "text": "الحروف مخبية داخل الكلمات… نشوف الكلمة، ونلقى الحرف المطلوب.",
+      "hash": "117bcd479c5b91c9",
+      "durationMs": 5672,
+      "bytes": 46018
+    },
+    "ar/t/form": {
+      "text": "الحرف يتغير شكله… في أول الكلمة، وفي وسطها، وفي آخرها. نختار الشكل الصح.",
+      "hash": "bdb16164f802816b",
+      "durationMs": 7331,
+      "bytes": 59184
+    },
+    "ar/t/picture": {
+      "text": "كل صورة تبدأ بحرف… نسمع اسم الصورة، ونعرف أول حرف فيها.",
+      "hash": "e2aa2749285d85e8",
+      "durationMs": 5504,
+      "bytes": 44555
+    },
+    "ar/ui/cheer-1": {
+      "text": "كفو!",
+      "hash": "691bf115203a21a3",
+      "durationMs": 853,
+      "bytes": 7357
+    },
+    "ar/ui/cheer-10": {
+      "text": "يا سلام! صح.",
+      "hash": "17f84e5b28b69139",
+      "durationMs": 1973,
+      "bytes": 16343
+    },
+    "ar/ui/cheer-2": {
+      "text": "ما شاء الله! صح.",
+      "hash": "1b1894ccde64e863",
+      "durationMs": 1970,
+      "bytes": 16343
+    },
+    "ar/ui/cheer-3": {
+      "text": "واو! جواب صح!",
+      "hash": "16f0fbe7ad477eed",
+      "durationMs": 1974,
+      "bytes": 16343
+    },
+    "ar/ui/cheer-4": {
+      "text": "برافو! جواب ممتاز.",
+      "hash": "437f5c27a4682f59",
+      "durationMs": 2319,
+      "bytes": 19060
+    },
+    "ar/ui/cheer-5": {
+      "text": "الله! جواب حلو.",
+      "hash": "a48a02c8b261ade5",
+      "durationMs": 2320,
+      "bytes": 19060
+    },
+    "ar/ui/cheer-6": {
+      "text": "تمام التمام!",
+      "hash": "77721d814b803515",
+      "durationMs": 1467,
+      "bytes": 12372
+    },
+    "ar/ui/cheer-7": {
+      "text": "عفية!",
+      "hash": "6d5a1f332f83e757",
+      "durationMs": 880,
+      "bytes": 7566
+    },
+    "ar/ui/cheer-8": {
+      "text": "صح! رائع.",
+      "hash": "262f0d5ca76615db",
+      "durationMs": 1615,
+      "bytes": 13417
+    },
+    "ar/ui/cheer-9": {
+      "text": "زين! جواب صحيح.",
+      "hash": "3f6e49f04141b8b2",
+      "durationMs": 1975,
+      "bytes": 16343
+    },
+    "ar/ui/done-good": {
+      "text": "حلو! نتدرب مرة ثانية… ونصير أقوى.",
+      "hash": "be2db2a4ee1406f1",
+      "durationMs": 3680,
+      "bytes": 29927
+    },
+    "ar/ui/done-great": {
+      "text": "واو! نتيجة رائعة!",
+      "hash": "cfb4757f5a4bcbf0",
+      "durationMs": 2561,
+      "bytes": 21149
+    },
+    "ar/ui/match-first": {
+      "text": "نختار الحرف أول… وبعدين الصورة.",
+      "hash": "3c5e242df7cf05e0",
+      "durationMs": 3200,
+      "bytes": 26165
+    },
+    "ar/ui/match-wrong": {
+      "text": "لا… نجرب مرة ثانية.",
+      "hash": "3f7a6fadd8f0f515",
+      "durationMs": 2351,
+      "bytes": 19269
+    },
+    "ar/ui/pos-final": {
+      "text": "الحرف في آخر الكلمة… فيتصل باللي قبله.",
+      "hash": "593fa1cfa2db0723",
+      "durationMs": 3920,
+      "bytes": 32016
+    },
+    "ar/ui/pos-initial": {
+      "text": "الحرف في أول الكلمة… فيتصل باللي بعده.",
+      "hash": "8abb37ebbee5a9bf",
+      "durationMs": 3763,
+      "bytes": 30763
+    },
+    "ar/ui/pos-isolated": {
+      "text": "الحرف هنا ما يتصل… فينكتب لحاله.",
+      "hash": "f08bbfdce7524785",
+      "durationMs": 3392,
+      "bytes": 27628
+    },
+    "ar/ui/pos-medial": {
+      "text": "الحرف في وسط الكلمة… فيتصل من الجهتين.",
+      "hash": "4d37b9ee054322d0",
+      "durationMs": 4196,
+      "bytes": 34106
+    },
+    "ar/ui/retry-1": {
+      "text": "مو مشكلة… الجواب الصح…",
+      "hash": "d4023bc2a9fb4b51",
+      "durationMs": 2559,
+      "bytes": 20940
+    },
+    "ar/ui/retry-2": {
+      "text": "قربنا! الجواب الصح…",
+      "hash": "dc437e4238565bf1",
+      "durationMs": 2304,
+      "bytes": 19060
+    },
+    "ar/ui/retry-3": {
+      "text": "خلنا نتعلمها مع بعض… الجواب الصح…",
+      "hash": "74cf9656fe83d22c",
+      "durationMs": 3286,
+      "bytes": 26792
+    },
+    "ar/ui/retry-4": {
+      "text": "محاولة حلوة! الجواب الصح…",
+      "hash": "63bdc19efb1ddd10",
+      "durationMs": 2802,
+      "bytes": 23030
+    },
+    "ar/ui/retry-5": {
+      "text": "نشوف مع بعض… الجواب الصح…",
+      "hash": "3a627ddb334b0d79",
+      "durationMs": 2656,
+      "bytes": 21776
+    },
+    "ar/ui/review": {
+      "text": "خلنا نتذكر مع بعض…",
+      "hash": "761c595d8d556cdc",
+      "durationMs": 1766,
+      "bytes": 14671
+    },
+    "ar/ui/test-intro": {
+      "text": "هذا اختبار تجريبي… فيه أسئلة من كل الدروس. يلا نبدأ!",
+      "hash": "dc1d19349831fa74",
+      "durationMs": 5065,
+      "bytes": 41003
+    },
+    "ar/ui/welcome": {
+      "text": "هلا والله! هذا اختبار اللغة العربية… نختار درس، ونبدأ.",
+      "hash": "287ea3e4a0375b8a",
+      "durationMs": 5248,
+      "bytes": 42465
+    },
+    "fs/blend/bahatha": {
+      "text": "بَحَثَ.",
+      "hash": "13f52af6a5f5e135",
+      "durationMs": 876,
+      "bytes": 7566
+    },
+    "fs/blend/darasa": {
+      "text": "دَرَسَ.",
+      "hash": "8fa1789ccd7b926d",
+      "durationMs": 919,
+      "bytes": 7984
+    },
+    "fs/blend/hadara": {
+      "text": "حَضَرَ.",
+      "hash": "aaf5a2fa73d944c4",
+      "durationMs": 922,
+      "bytes": 7984
+    },
+    "fs/blend/harasa": {
+      "text": "حَرَسَ.",
+      "hash": "78d4de63a841345a",
+      "durationMs": 950,
+      "bytes": 8193
+    },
+    "fs/blend/haratha": {
+      "text": "حَرَثَ.",
+      "hash": "e484f2eb088ede79",
+      "durationMs": 925,
+      "bytes": 7984
+    },
+    "fs/blend/jadhaba": {
+      "text": "جَذَبَ.",
+      "hash": "1e185a720c52ef5c",
+      "durationMs": 945,
+      "bytes": 8193
+    },
+    "fs/blend/khabaza": {
+      "text": "خَبَزَ.",
+      "hash": "ba5f4d304f029564",
+      "durationMs": 925,
+      "bytes": 7984
+    },
+    "fs/blend/kharaja": {
+      "text": "خَرَجَ.",
+      "hash": "667aec2d82d82e7e",
+      "durationMs": 945,
+      "bytes": 8193
+    },
+    "fs/blend/sabaha": {
+      "text": "سَبَحَ.",
+      "hash": "383cc3be3e81de93",
+      "durationMs": 914,
+      "bytes": 7775
+    },
+    "fs/blend/sabara": {
+      "text": "صَبَرَ.",
+      "hash": "c8fab08a2b984522",
+      "durationMs": 880,
+      "bytes": 7566
+    },
+    "fs/blend/shariba": {
+      "text": "شَرِبَ.",
+      "hash": "939c48826698d55a",
+      "durationMs": 923,
+      "bytes": 7984
+    },
+    "fs/blend/tabakha": {
+      "text": "طَبَخَ.",
+      "hash": "234c18b7b2645bfe",
+      "durationMs": 1040,
+      "bytes": 8820
+    },
+    "fs/blend/zaara": {
+      "text": "زَأَرَ.",
+      "hash": "8a73bd4e79adf2db",
+      "durationMs": 945,
+      "bytes": 8193
+    },
+    "fs/dots/alif": {
+      "text": "حَرْفُ الأَلِفِ، فَوْقَهُ هَمْزَةٌ.",
+      "hash": "e1a4e6783cb1fe8a",
+      "durationMs": 3207,
+      "bytes": 26165
+    },
+    "fs/dots/ba": {
+      "text": "حَرْفُ البَاءِ، تَحْتَهُ نُقْطَةٌ وَاحِدَةٌ.",
+      "hash": "f945d365684a0a41",
+      "durationMs": 3546,
+      "bytes": 28882
+    },
+    "fs/dots/dad": {
+      "text": "حَرْفُ الضَّادِ، فَوْقَهُ نُقْطَةٌ وَاحِدَةٌ.",
+      "hash": "c3a1ccb8c1fc5abb",
+      "durationMs": 3715,
+      "bytes": 30345
+    },
+    "fs/dots/dal": {
+      "text": "حَرْفُ الدَّالِ، لَيْسَ فِيهِ نِقَاطٌ.",
+      "hash": "c0909bbd96988e3c",
+      "durationMs": 3106,
+      "bytes": 25329
+    },
+    "fs/dots/dhal": {
+      "text": "حَرْفُ الذَّالِ، فَوْقَهُ نُقْطَةٌ وَاحِدَةٌ.",
+      "hash": "b7aa5fbc79515ca9",
+      "durationMs": 3593,
+      "bytes": 29300
+    },
+    "fs/dots/ha": {
+      "text": "حَرْفُ الحَاءِ، لَيْسَ فِيهِ نِقَاطٌ.",
+      "hash": "2e31d3ec22f97e5e",
+      "durationMs": 3120,
+      "bytes": 25538
+    },
+    "fs/dots/jim": {
+      "text": "حَرْفُ الجِيمِ، تَحْتَهُ نُقْطَةٌ وَاحِدَةٌ.",
+      "hash": "9b132cec2cb78c50",
+      "durationMs": 3589,
+      "bytes": 29300
+    },
+    "fs/dots/kha": {
+      "text": "حَرْفُ الخَاءِ، فَوْقَهُ نُقْطَةٌ وَاحِدَةٌ.",
+      "hash": "8c9f66091b4b52c2",
+      "durationMs": 3495,
+      "bytes": 28464
+    },
+    "fs/dots/ra": {
+      "text": "حَرْفُ الرَّاءِ، لَيْسَ فِيهِ نِقَاطٌ.",
+      "hash": "cd3820687be55b2a",
+      "durationMs": 3188,
+      "bytes": 26165
+    },
+    "fs/dots/sad": {
+      "text": "حَرْفُ الصَّادِ، لَيْسَ فِيهِ نِقَاطٌ.",
+      "hash": "c827d7490bda5636",
+      "durationMs": 3182,
+      "bytes": 25956
+    },
+    "fs/dots/shin": {
+      "text": "حَرْفُ الشِّينِ، فَوْقَهُ ثَلَاثُ نِقَاطٍ.",
+      "hash": "1fa66d4f3d285d5a",
+      "durationMs": 3562,
+      "bytes": 29091
+    },
+    "fs/dots/sin": {
+      "text": "حَرْفُ السِّينِ، لَيْسَ فِيهِ نِقَاطٌ.",
+      "hash": "9e4ff1223979bbdb",
+      "durationMs": 3200,
+      "bytes": 26165
+    },
+    "fs/dots/ta": {
+      "text": "حَرْفُ التَّاءِ، فَوْقَهُ نُقْطَتَانِ.",
+      "hash": "3444300db994dce7",
+      "durationMs": 3188,
+      "bytes": 26165
+    },
+    "fs/dots/tha": {
+      "text": "حَرْفُ الثَّاءِ، فَوْقَهُ ثَلَاثُ نِقَاطٍ.",
+      "hash": "650fa60b4c103cf2",
+      "durationMs": 3641,
+      "bytes": 29718
+    },
+    "fs/dots/tta": {
+      "text": "حَرْفُ الطَّاءِ، لَيْسَ فِيهِ نِقَاطٌ.",
+      "hash": "aae24c8d826bed2f",
+      "durationMs": 3169,
+      "bytes": 25956
+    },
+    "fs/dots/zay": {
+      "text": "حَرْفُ الزَّايِ، فَوْقَهُ نُقْطَةٌ وَاحِدَةٌ.",
+      "hash": "bfdc183fe482ab21",
+      "durationMs": 3670,
+      "bytes": 29927
+    },
+    "fs/dots/zza": {
+      "text": "حَرْفُ الظَّاءِ، فَوْقَهُ نُقْطَةٌ وَاحِدَةٌ.",
+      "hash": "cb252aa447f799d2",
+      "durationMs": 3623,
+      "bytes": 29509
+    },
+    "fs/name/alif": {
+      "text": "حَرْفُ الأَلِفِ.",
+      "hash": "28696a1d78dbb55e",
+      "durationMs": 1417,
+      "bytes": 11954
+    },
+    "fs/name/ba": {
+      "text": "حَرْفُ البَاءِ.",
+      "hash": "1bc6eda8c99270fd",
+      "durationMs": 1392,
+      "bytes": 11745
+    },
+    "fs/name/dad": {
+      "text": "حَرْفُ الضَّادِ.",
+      "hash": "6f33447c34904737",
+      "durationMs": 1394,
+      "bytes": 11745
+    },
+    "fs/name/dal": {
+      "text": "حَرْفُ الدَّالِ.",
+      "hash": "c1cb5bb6a68f7b67",
+      "durationMs": 1520,
+      "bytes": 12790
+    },
+    "fs/name/dhal": {
+      "text": "حَرْفُ الذَّالِ.",
+      "hash": "9459acc2a603eca3",
+      "durationMs": 1444,
+      "bytes": 12163
+    },
+    "fs/name/ha": {
+      "text": "حَرْفُ الحَاءِ.",
+      "hash": "04427b06d448eee1",
+      "durationMs": 1411,
+      "bytes": 11745
+    },
+    "fs/name/jim": {
+      "text": "حَرْفُ الجِيمِ.",
+      "hash": "8d1aa6061ea2b7b6",
+      "durationMs": 1361,
+      "bytes": 11536
+    },
+    "fs/name/kha": {
+      "text": "حَرْفُ الخَاءِ.",
+      "hash": "5ef93dfbdf1f761d",
+      "durationMs": 1470,
+      "bytes": 12372
+    },
+    "fs/name/ra": {
+      "text": "حَرْفُ الرَّاءِ.",
+      "hash": "5eeb9bdca747b6a3",
+      "durationMs": 1414,
+      "bytes": 11954
+    },
+    "fs/name/sad": {
+      "text": "حَرْفُ الصَّادِ.",
+      "hash": "154f3a9b39418d92",
+      "durationMs": 1386,
+      "bytes": 11745
+    },
+    "fs/name/shin": {
+      "text": "حَرْفُ الشِّينِ.",
+      "hash": "ff901f6c8373bad3",
+      "durationMs": 1520,
+      "bytes": 12790
+    },
+    "fs/name/sin": {
+      "text": "حَرْفُ السِّينِ.",
+      "hash": "eb304d4b8a7cd5ea",
+      "durationMs": 1401,
+      "bytes": 11745
+    },
+    "fs/name/ta": {
+      "text": "حَرْفُ التَّاءِ.",
+      "hash": "7df97716f38146a2",
+      "durationMs": 1319,
+      "bytes": 11118
+    },
+    "fs/name/tha": {
+      "text": "حَرْفُ الثَّاءِ.",
+      "hash": "cc4920079e3d9072",
+      "durationMs": 1312,
+      "bytes": 11118
+    },
+    "fs/name/tta": {
+      "text": "حَرْفُ الطَّاءِ.",
+      "hash": "cb3746f8c8deb8f5",
+      "durationMs": 1325,
+      "bytes": 11118
+    },
+    "fs/name/zay": {
+      "text": "حَرْفُ الزَّايِ.",
+      "hash": "c1d6a090574323a4",
+      "durationMs": 1357,
+      "bytes": 11327
+    },
+    "fs/name/zza": {
+      "text": "حَرْفُ الظَّاءِ.",
+      "hash": "593748f6147c8a5b",
+      "durationMs": 1324,
+      "bytes": 11118
+    },
+    "fs/starts/alif": {
+      "text": "تَبْدَأُ بِحَرْفِ الأَلِفِ.",
+      "hash": "fc1832e5ce633e7c",
+      "durationMs": 1885,
+      "bytes": 15716
+    },
+    "fs/starts/ba": {
+      "text": "تَبْدَأُ بِحَرْفِ البَاءِ.",
+      "hash": "e61cd4469e193b45",
+      "durationMs": 2000,
+      "bytes": 16552
+    },
+    "fs/starts/dad": {
+      "text": "تَبْدَأُ بِحَرْفِ الضَّادِ.",
+      "hash": "411b9aa53cc2b67e",
+      "durationMs": 1968,
+      "bytes": 16343
+    },
+    "fs/starts/dal": {
+      "text": "تَبْدَأُ بِحَرْفِ الدَّالِ.",
+      "hash": "77d3ff8ad1df2dd2",
+      "durationMs": 2000,
+      "bytes": 16552
+    },
+    "fs/starts/dhal": {
+      "text": "تَبْدَأُ بِحَرْفِ الذَّالِ.",
+      "hash": "2576611d361d101d",
+      "durationMs": 1920,
+      "bytes": 15925
+    },
+    "fs/starts/ha": {
+      "text": "تَبْدَأُ بِحَرْفِ الحَاءِ.",
+      "hash": "3005f87fa2469ee4",
+      "durationMs": 1956,
+      "bytes": 16134
+    },
+    "fs/starts/jim": {
+      "text": "تَبْدَأُ بِحَرْفِ الجِيمِ.",
+      "hash": "f66f6a0546c5aa0c",
+      "durationMs": 1920,
+      "bytes": 15925
+    },
+    "fs/starts/kha": {
+      "text": "تَبْدَأُ بِحَرْفِ الخَاءِ.",
+      "hash": "46947af2ed57734c",
+      "durationMs": 1874,
+      "bytes": 15507
+    },
+    "fs/starts/ra": {
+      "text": "تَبْدَأُ بِحَرْفِ الرَّاءِ.",
+      "hash": "9bf1f46237fc66c3",
+      "durationMs": 1886,
+      "bytes": 15716
+    },
+    "fs/starts/sad": {
+      "text": "تَبْدَأُ بِحَرْفِ الصَّادِ.",
+      "hash": "4890123976326032",
+      "durationMs": 2080,
+      "bytes": 17179
+    },
+    "fs/starts/shin": {
+      "text": "تَبْدَأُ بِحَرْفِ الشِّينِ.",
+      "hash": "8a8bc9ec8f2f5531",
+      "durationMs": 1938,
+      "bytes": 16134
+    },
+    "fs/starts/sin": {
+      "text": "تَبْدَأُ بِحَرْفِ السِّينِ.",
+      "hash": "754f4c01eb3b833e",
+      "durationMs": 2000,
+      "bytes": 16552
+    },
+    "fs/starts/ta": {
+      "text": "تَبْدَأُ بِحَرْفِ التَّاءِ.",
+      "hash": "c2f205d7d604d665",
+      "durationMs": 2000,
+      "bytes": 16552
+    },
+    "fs/starts/tha": {
+      "text": "تَبْدَأُ بِحَرْفِ الثَّاءِ.",
+      "hash": "143d105b64bd0111",
+      "durationMs": 1942,
+      "bytes": 16134
+    },
+    "fs/starts/tta": {
+      "text": "تَبْدَأُ بِحَرْفِ الطَّاءِ.",
+      "hash": "cda8c51b4c2af3ce",
+      "durationMs": 1969,
+      "bytes": 16343
+    },
+    "fs/starts/zay": {
+      "text": "تَبْدَأُ بِحَرْفِ الزَّايِ.",
+      "hash": "3cba64275b7b1c54",
+      "durationMs": 1969,
+      "bytes": 16343
+    },
+    "fs/starts/zza": {
+      "text": "تَبْدَأُ بِحَرْفِ الظَّاءِ.",
+      "hash": "f73191dc38305dd4",
+      "durationMs": 1928,
+      "bytes": 15925
+    },
+    "fs/where/alif": {
+      "text": "أَيْنَ حَرْفُ الأَلِفِ؟",
+      "hash": "f5fcd4ca5f0e5c89",
+      "durationMs": 1503,
+      "bytes": 12581
+    },
+    "fs/where/ba": {
+      "text": "أَيْنَ حَرْفُ البَاءِ؟",
+      "hash": "1c22ce536db070f9",
+      "durationMs": 1492,
+      "bytes": 12581
+    },
+    "fs/where/dad": {
+      "text": "أَيْنَ حَرْفُ الضَّادِ؟",
+      "hash": "4ccac0c45ea818c0",
+      "durationMs": 1445,
+      "bytes": 12163
+    },
+    "fs/where/dal": {
+      "text": "أَيْنَ حَرْفُ الدَّالِ؟",
+      "hash": "035d7311de8832ad",
+      "durationMs": 1480,
+      "bytes": 12372
+    },
+    "fs/where/dhal": {
+      "text": "أَيْنَ حَرْفُ الذَّالِ؟",
+      "hash": "d94feb4edb002806",
+      "durationMs": 1510,
+      "bytes": 12581
+    },
+    "fs/where/ha": {
+      "text": "أَيْنَ حَرْفُ الحَاءِ؟",
+      "hash": "9e7a9b9f814e04ba",
+      "durationMs": 1561,
+      "bytes": 12999
+    },
+    "fs/where/jim": {
+      "text": "أَيْنَ حَرْفُ الجِيمِ؟",
+      "hash": "6d3ab811b01d3094",
+      "durationMs": 1351,
+      "bytes": 11327
+    },
+    "fs/where/kha": {
+      "text": "أَيْنَ حَرْفُ الخَاءِ؟",
+      "hash": "5bc243bfbe2fb590",
+      "durationMs": 1600,
+      "bytes": 13417
+    },
+    "fs/where/ra": {
+      "text": "أَيْنَ حَرْفُ الرَّاءِ؟",
+      "hash": "542aa27751a55338",
+      "durationMs": 1449,
+      "bytes": 12163
+    },
+    "fs/where/sad": {
+      "text": "أَيْنَ حَرْفُ الصَّادِ؟",
+      "hash": "f7bd3b5c9ce3fd59",
+      "durationMs": 1525,
+      "bytes": 12790
+    },
+    "fs/where/shin": {
+      "text": "أَيْنَ حَرْفُ الشِّينِ؟",
+      "hash": "2fdd1c5c610a6f24",
+      "durationMs": 1484,
+      "bytes": 12372
+    },
+    "fs/where/sin": {
+      "text": "أَيْنَ حَرْفُ السِّينِ؟",
+      "hash": "06226e34480ac1ec",
+      "durationMs": 1403,
+      "bytes": 11745
+    },
+    "fs/where/ta": {
+      "text": "أَيْنَ حَرْفُ التَّاءِ؟",
+      "hash": "fbc7cc4a09ecfb2e",
+      "durationMs": 1464,
+      "bytes": 12372
+    },
+    "fs/where/tha": {
+      "text": "أَيْنَ حَرْفُ الثَّاءِ؟",
+      "hash": "0259d1861eb42e8a",
+      "durationMs": 1493,
+      "bytes": 12581
+    },
+    "fs/where/tta": {
+      "text": "أَيْنَ حَرْفُ الطَّاءِ؟",
+      "hash": "7ba3dbd48feb2972",
+      "durationMs": 1458,
+      "bytes": 12163
+    },
+    "fs/where/zay": {
+      "text": "أَيْنَ حَرْفُ الزَّايِ؟",
+      "hash": "350277b5f14f1941",
+      "durationMs": 1489,
+      "bytes": 12372
+    },
+    "fs/where/zza": {
+      "text": "أَيْنَ حَرْفُ الظَّاءِ؟",
+      "hash": "c24052f143960c50",
+      "durationMs": 1508,
+      "bytes": 12581
+    },
+    "fs/word/arnab": {
+      "text": "أَرْنَب.",
+      "hash": "3c0fd4a124711a32",
+      "durationMs": 839,
+      "bytes": 7357
+    },
+    "fs/word/asad": {
+      "text": "أَسَد.",
+      "hash": "55654d4caace42f8",
+      "durationMs": 760,
+      "bytes": 6730
+    },
+    "fs/word/bab": {
+      "text": "بَاب.",
+      "hash": "877b2681f5827de3",
+      "durationMs": 774,
+      "bytes": 6730
+    },
+    "fs/word/baqara": {
+      "text": "بَقَرَة.",
+      "hash": "1bce1d94c42b63e2",
+      "durationMs": 941,
+      "bytes": 8193
+    },
+    "fs/word/batta": {
+      "text": "بَطَّة.",
+      "hash": "edd40ccca8245559",
+      "durationMs": 857,
+      "bytes": 7357
+    },
+    "fs/word/bayd": {
+      "text": "بَيْض.",
+      "hash": "2fa128af279dc3b5",
+      "durationMs": 852,
+      "bytes": 7357
+    },
+    "fs/word/bayt": {
+      "text": "بَيْت.",
+      "hash": "2ac07a01bd5a6a88",
+      "durationMs": 1120,
+      "bytes": 9447
+    },
+    "fs/word/dabb": {
+      "text": "ضَبّ.",
+      "hash": "c677c2d9a7f96bcc",
+      "durationMs": 960,
+      "bytes": 8193
+    },
+    "fs/word/dajaja": {
+      "text": "دَجَاجَة.",
+      "hash": "c7c4ef7e520ef5a8",
+      "durationMs": 1016,
+      "bytes": 8611
+    },
+    "fs/word/darraja": {
+      "text": "دَرَّاجَة.",
+      "hash": "35bfbcd408c559c8",
+      "durationMs": 1040,
+      "bytes": 8820
+    },
+    "fs/word/dhib": {
+      "text": "ذِئْب.",
+      "hash": "fdad9f9524ee3a29",
+      "durationMs": 1040,
+      "bytes": 8820
+    },
+    "fs/word/dhubaba": {
+      "text": "ذُبَابَة.",
+      "hash": "161cf93deeae4dac",
+      "durationMs": 1200,
+      "bytes": 10074
+    },
+    "fs/word/dhura": {
+      "text": "ذُرَة.",
+      "hash": "13f3348cbd5ab2a6",
+      "durationMs": 826,
+      "bytes": 7148
+    },
+    "fs/word/difda": {
+      "text": "ضِفْدَع.",
+      "hash": "afb60db8048e173b",
+      "durationMs": 944,
+      "bytes": 8193
+    },
+    "fs/word/dubb": {
+      "text": "دُبّ.",
+      "hash": "350a2f67f5d867f3",
+      "durationMs": 846,
+      "bytes": 7357
+    },
+    "fs/word/halib": {
+      "text": "حَلِيب.",
+      "hash": "0385f21df9cb2fb3",
+      "durationMs": 965,
+      "bytes": 8193
+    },
+    "fs/word/hidha": {
+      "text": "حِذَاء.",
+      "hash": "498bcacd69b12a54",
+      "durationMs": 968,
+      "bytes": 8402
+    },
+    "fs/word/hisan": {
+      "text": "حِصَان.",
+      "hash": "fbb2b5940137af42",
+      "durationMs": 1040,
+      "bytes": 8820
+    },
+    "fs/word/inab": {
+      "text": "عِنَب.",
+      "hash": "92b56a55ac216f0b",
+      "durationMs": 876,
+      "bytes": 7566
+    },
+    "fs/word/jamal": {
+      "text": "جَمَل.",
+      "hash": "6cd929af8ceaa902",
+      "durationMs": 868,
+      "bytes": 7566
+    },
+    "fs/word/jaras": {
+      "text": "جَرَس.",
+      "hash": "5fac82d5ac2c3191",
+      "durationMs": 934,
+      "bytes": 7984
+    },
+    "fs/word/jazara": {
+      "text": "جَزَرَة.",
+      "hash": "ed1f150dea98f6cc",
+      "durationMs": 928,
+      "bytes": 7984
+    },
+    "fs/word/kharuf": {
+      "text": "خَرُوف.",
+      "hash": "92c82d59f42ca7ca",
+      "durationMs": 1023,
+      "bytes": 8820
+    },
+    "fs/word/khayma": {
+      "text": "خَيْمَة.",
+      "hash": "593c0a5a7443d0f1",
+      "durationMs": 894,
+      "bytes": 7775
+    },
+    "fs/word/khayt": {
+      "text": "خَيْط.",
+      "hash": "ad273aa8af6b9b71",
+      "durationMs": 1120,
+      "bytes": 9447
+    },
+    "fs/word/khubz": {
+      "text": "خُبْز.",
+      "hash": "6053dd6b99e99e91",
+      "durationMs": 842,
+      "bytes": 7357
+    },
+    "fs/word/milh": {
+      "text": "مِلْح.",
+      "hash": "d131312f5840807e",
+      "durationMs": 852,
+      "bytes": 7357
+    },
+    "fs/word/nahla": {
+      "text": "نَحْلَة.",
+      "hash": "952b3f9c28f43342",
+      "durationMs": 880,
+      "bytes": 7566
+    },
+    "fs/word/najma": {
+      "text": "نَجْمَة.",
+      "hash": "8098d9f2a48a0356",
+      "durationMs": 880,
+      "bytes": 7566
+    },
+    "fs/word/nazzara": {
+      "text": "نَظَّارَة.",
+      "hash": "a129b0955ce2ee5d",
+      "durationMs": 1097,
+      "bytes": 9238
+    },
+    "fs/word/qamar": {
+      "text": "قَمَر.",
+      "hash": "3affaac474cb9939",
+      "durationMs": 786,
+      "bytes": 6939
+    },
+    "fs/word/qitta": {
+      "text": "قِطَّة.",
+      "hash": "3d0b6a1c4f990014",
+      "durationMs": 761,
+      "bytes": 6730
+    },
+    "fs/word/rajul": {
+      "text": "رَجُل.",
+      "hash": "6836da9e7f53bd15",
+      "durationMs": 852,
+      "bytes": 7357
+    },
+    "fs/word/risha": {
+      "text": "رِيشَة.",
+      "hash": "8617ccde288b5eab",
+      "durationMs": 858,
+      "bytes": 7357
+    },
+    "fs/word/ruzz": {
+      "text": "رُزّ.",
+      "hash": "d28ff72c79be8275",
+      "durationMs": 875,
+      "bytes": 7566
+    },
+    "fs/word/samaka": {
+      "text": "سَمَكَة.",
+      "hash": "cc9c82238b25877c",
+      "durationMs": 916,
+      "bytes": 7984
+    },
+    "fs/word/saqr": {
+      "text": "صَقْر.",
+      "hash": "b47c1722b53c7f40",
+      "durationMs": 880,
+      "bytes": 7566
+    },
+    "fs/word/sarukh": {
+      "text": "صَارُوخ.",
+      "hash": "b6a73038b9386c26",
+      "durationMs": 1360,
+      "bytes": 11536
+    },
+    "fs/word/sayyara": {
+      "text": "سَيَّارَة.",
+      "hash": "daa49383a2ae3a05",
+      "durationMs": 1085,
+      "bytes": 9238
+    },
+    "fs/word/shajara": {
+      "text": "شَجَرَة.",
+      "hash": "cc20ba3511e75200",
+      "durationMs": 931,
+      "bytes": 7984
+    },
+    "fs/word/shama": {
+      "text": "شَمْعَة.",
+      "hash": "c1210d92e76affb9",
+      "durationMs": 867,
+      "bytes": 7566
+    },
+    "fs/word/shams": {
+      "text": "شَمْس.",
+      "hash": "914bb2caacdea470",
+      "durationMs": 910,
+      "bytes": 7775
+    },
+    "fs/word/sulahfa": {
+      "text": "سُلَحْفَاة.",
+      "hash": "8b6a8a75d5d486d8",
+      "durationMs": 1074,
+      "bytes": 9238
+    },
+    "fs/word/sunduq": {
+      "text": "صُنْدُوق.",
+      "hash": "e1646085694ecd5f",
+      "durationMs": 1090,
+      "bytes": 9238
+    },
+    "fs/word/tabl": {
+      "text": "طَبْل.",
+      "hash": "7e3b4e98df7d336f",
+      "durationMs": 800,
+      "bytes": 6939
+    },
+    "fs/word/taira": {
+      "text": "طَائِرَة.",
+      "hash": "2823e4c01c80d58e",
+      "durationMs": 927,
+      "bytes": 7984
+    },
+    "fs/word/taj": {
+      "text": "تَاج.",
+      "hash": "96154bd84933c826",
+      "durationMs": 875,
+      "bytes": 7566
+    },
+    "fs/word/tamatim": {
+      "text": "طَمَاطِم.",
+      "hash": "31838abd2e363c13",
+      "durationMs": 994,
+      "bytes": 8611
+    },
+    "fs/word/thalab": {
+      "text": "ثَعْلَب.",
+      "hash": "c3741521e7da21d7",
+      "durationMs": 910,
+      "bytes": 7775
+    },
+    "fs/word/thalj": {
+      "text": "ثَلْج.",
+      "hash": "d668974ea5287e97",
+      "durationMs": 914,
+      "bytes": 7775
+    },
+    "fs/word/thum": {
+      "text": "ثُوم.",
+      "hash": "11fedbaf0df788a4",
+      "durationMs": 838,
+      "bytes": 7357
+    },
+    "fs/word/timsah": {
+      "text": "تِمْسَاح.",
+      "hash": "23ed9c2d16b62cec",
+      "durationMs": 1008,
+      "bytes": 8611
+    },
+    "fs/word/tuffaha": {
+      "text": "تُفَّاحَة.",
+      "hash": "e35e4beac2a7fb66",
+      "durationMs": 1021,
+      "bytes": 8820
+    },
+    "fs/word/udhun": {
+      "text": "أُذُن.",
+      "hash": "6a5675cf41fae5c0",
+      "durationMs": 780,
+      "bytes": 6730
+    },
+    "fs/word/usfur": {
+      "text": "عُصْفُور.",
+      "hash": "b61a01a597a0e9c8",
+      "durationMs": 1090,
+      "bytes": 9238
+    },
+    "fs/word/yad": {
+      "text": "يَد.",
+      "hash": "270cd99d895b9729",
+      "durationMs": 782,
+      "bytes": 6730
+    },
+    "fs/word/zabi": {
+      "text": "ظَبْي.",
+      "hash": "6a408fe3f12a2e46",
+      "durationMs": 807,
+      "bytes": 6939
+    },
+    "fs/word/zahra": {
+      "text": "زَهْرَة.",
+      "hash": "519961275e4e00db",
+      "durationMs": 880,
+      "bytes": 7566
+    },
+    "fs/word/zarafa": {
+      "text": "زَرَافَة.",
+      "hash": "2990c7d4c4241499",
+      "durationMs": 991,
+      "bytes": 8402
+    },
+    "fs/word/zarf": {
+      "text": "ظَرْف.",
+      "hash": "279922f44ad8c23b",
+      "durationMs": 854,
+      "bytes": 7357
+    },
+    "fs/word/zaytun": {
+      "text": "زَيْتُون.",
+      "hash": "ef1bccf9c0c0d604",
+      "durationMs": 1001,
+      "bytes": 8611
+    }
+  }
+}

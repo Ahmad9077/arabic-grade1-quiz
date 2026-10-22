@@ -1,0 +1,25 @@
+{
+  "id": "arabic-grade1",
+  "quizId": "arabic-grade1",
+  "title": "اللغة العربية - الأول الابتدائي",
+  "description": "اختبار تدريبي للاختبار الأول في اللغة العربية للصف الأول: الحروف من أ إلى ظ.",
+  "recommendedAge": "5–7",
+  "basePath": "/arabic-grade1-quiz/",
+  "questionsPerRound": 8,
+  "testQuestions": 12,
+  "topics": [
+    "picture",
+    "find",
+    "form",
+    "blend",
+    "copy"
+  ],
+  "capabilities": {
+    "audio": true,
+    "adaptive": true,
+    "progress": true,
+    "answerReview": true,
+    "challenge": false
+  },
+  "version": "1.0.0"
+}
