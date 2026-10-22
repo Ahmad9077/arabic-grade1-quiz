@@ -240,47 +240,53 @@
       "durationMs": 5248,
       "bytes": 42465
     },
+    "fs/blend/akala": {
+      "text": "أَكَلَ.",
+      "hash": "c8f251cce7670b3b",
+      "durationMs": 772,
+      "bytes": 6730
+    },
     "fs/blend/bahatha": {
       "text": "بَحَثَ.",
       "hash": "13f52af6a5f5e135",
       "durationMs": 876,
       "bytes": 7566
     },
-    "fs/blend/darasa": {
-      "text": "دَرَسَ.",
-      "hash": "8fa1789ccd7b926d",
-      "durationMs": 919,
-      "bytes": 7984
+    "fs/blend/dakhala": {
+      "text": "دَخَلَ.",
+      "hash": "06c91a3c8450b4f8",
+      "durationMs": 869,
+      "bytes": 7566
     },
-    "fs/blend/hadara": {
-      "text": "حَضَرَ.",
-      "hash": "aaf5a2fa73d944c4",
-      "durationMs": 922,
-      "bytes": 7984
+    "fs/blend/dhahaba": {
+      "text": "ذَهَبَ.",
+      "hash": "032c6a23ffdf6e35",
+      "durationMs": 1120,
+      "bytes": 9447
     },
-    "fs/blend/harasa": {
-      "text": "حَرَسَ.",
-      "hash": "78d4de63a841345a",
-      "durationMs": 950,
+    "fs/blend/fataha": {
+      "text": "فَتَحَ.",
+      "hash": "70b06c296d71be74",
+      "durationMs": 914,
+      "bytes": 7775
+    },
+    "fs/blend/hafiza": {
+      "text": "حَفِظَ.",
+      "hash": "bbe6f9272b4b5377",
+      "durationMs": 948,
       "bytes": 8193
     },
-    "fs/blend/haratha": {
-      "text": "حَرَثَ.",
-      "hash": "e484f2eb088ede79",
-      "durationMs": 925,
-      "bytes": 7984
-    },
-    "fs/blend/jadhaba": {
-      "text": "جَذَبَ.",
-      "hash": "1e185a720c52ef5c",
+    "fs/blend/jalasa": {
+      "text": "جَلَسَ.",
+      "hash": "6bcdfab28e36300a",
       "durationMs": 945,
       "bytes": 8193
     },
-    "fs/blend/khabaza": {
-      "text": "خَبَزَ.",
-      "hash": "ba5f4d304f029564",
-      "durationMs": 925,
-      "bytes": 7984
+    "fs/blend/kataba": {
+      "text": "كَتَبَ.",
+      "hash": "42b014eaa2b1692c",
+      "durationMs": 824,
+      "bytes": 7148
     },
     "fs/blend/kharaja": {
       "text": "خَرَجَ.",
@@ -288,17 +294,29 @@
       "durationMs": 945,
       "bytes": 8193
     },
-    "fs/blend/sabaha": {
-      "text": "سَبَحَ.",
-      "hash": "383cc3be3e81de93",
-      "durationMs": 914,
-      "bytes": 7775
+    "fs/blend/nazara": {
+      "text": "نَظَرَ.",
+      "hash": "59d536ce282ae888",
+      "durationMs": 861,
+      "bytes": 7357
     },
-    "fs/blend/sabara": {
-      "text": "صَبَرَ.",
-      "hash": "c8fab08a2b984522",
-      "durationMs": 880,
+    "fs/blend/rasama": {
+      "text": "رَسَمَ.",
+      "hash": "9856e8671cd58de2",
+      "durationMs": 852,
+      "bytes": 7357
+    },
+    "fs/blend/saala": {
+      "text": "سَأَلَ.",
+      "hash": "57fcc6c803e860c5",
+      "durationMs": 879,
       "bytes": 7566
+    },
+    "fs/blend/sahaba": {
+      "text": "سَحَبَ.",
+      "hash": "582f3472ba7c70f8",
+      "durationMs": 1120,
+      "bytes": 9447
     },
     "fs/blend/shariba": {
       "text": "شَرِبَ.",
@@ -306,17 +324,11 @@
       "durationMs": 923,
       "bytes": 7984
     },
-    "fs/blend/tabakha": {
-      "text": "طَبَخَ.",
-      "hash": "234c18b7b2645bfe",
-      "durationMs": 1040,
-      "bytes": 8820
-    },
-    "fs/blend/zaara": {
-      "text": "زَأَرَ.",
-      "hash": "8a73bd4e79adf2db",
-      "durationMs": 945,
-      "bytes": 8193
+    "fs/blend/tabaa": {
+      "text": "طَبَعَ.",
+      "hash": "faf6720019608ce0",
+      "durationMs": 776,
+      "bytes": 6730
     },
     "fs/dots/alif": {
       "text": "حَرْفُ الأَلِفِ، فَوْقَهُ هَمْزَةٌ.",
@@ -726,6 +738,24 @@
       "durationMs": 1508,
       "bytes": 12581
     },
+    "fs/word/ananas": {
+      "text": "أَنَانَاس.",
+      "hash": "665f6d8065da4951",
+      "durationMs": 1013,
+      "bytes": 8611
+    },
+    "fs/word/anf": {
+      "text": "أَنْف.",
+      "hash": "7d992a1675b4344e",
+      "durationMs": 1040,
+      "bytes": 8820
+    },
+    "fs/word/ankabut": {
+      "text": "عَنْكَبُوت.",
+      "hash": "b0623bb7f8e09ec1",
+      "durationMs": 1205,
+      "bytes": 10283
+    },
     "fs/word/arnab": {
       "text": "أَرْنَب.",
       "hash": "3c0fd4a124711a32",
@@ -738,23 +768,35 @@
       "durationMs": 760,
       "bytes": 6730
     },
-    "fs/word/bab": {
-      "text": "بَاب.",
-      "hash": "877b2681f5827de3",
-      "durationMs": 774,
-      "bytes": 6730
+    "fs/word/badr": {
+      "text": "بَدْر.",
+      "hash": "7b151bf88b411604",
+      "durationMs": 853,
+      "bytes": 7357
     },
-    "fs/word/baqara": {
-      "text": "بَقَرَة.",
-      "hash": "1bce1d94c42b63e2",
-      "durationMs": 941,
-      "bytes": 8193
+    "fs/word/bahr": {
+      "text": "بَحْر.",
+      "hash": "c5554b6143cdad0c",
+      "durationMs": 804,
+      "bytes": 6939
+    },
+    "fs/word/basal": {
+      "text": "بَصَل.",
+      "hash": "23cb5a2f4d31b627",
+      "durationMs": 802,
+      "bytes": 6939
     },
     "fs/word/batta": {
       "text": "بَطَّة.",
       "hash": "edd40ccca8245559",
       "durationMs": 857,
       "bytes": 7357
+    },
+    "fs/word/battikh": {
+      "text": "بِطِّيخ.",
+      "hash": "d4c69f3034aa7bb7",
+      "durationMs": 1153,
+      "bytes": 9865
     },
     "fs/word/bayd": {
       "text": "بَيْض.",
@@ -768,10 +810,28 @@
       "durationMs": 1120,
       "bytes": 9447
     },
-    "fs/word/dabb": {
-      "text": "ضَبّ.",
-      "hash": "c677c2d9a7f96bcc",
-      "durationMs": 960,
+    "fs/word/bitriq": {
+      "text": "بِطْرِيق.",
+      "hash": "e6300f9a4a7ba5bc",
+      "durationMs": 1101,
+      "bytes": 9447
+    },
+    "fs/word/burkan": {
+      "text": "بُرْكَان.",
+      "hash": "f60d80a1b7a85d8b",
+      "durationMs": 1281,
+      "bytes": 10909
+    },
+    "fs/word/dabu": {
+      "text": "ضَبُع.",
+      "hash": "59dfe23437a147ee",
+      "durationMs": 800,
+      "bytes": 6939
+    },
+    "fs/word/dahika": {
+      "text": "ضَحِكَ.",
+      "hash": "428c2c8a3b670c35",
+      "durationMs": 945,
       "bytes": 8193
     },
     "fs/word/dajaja": {
@@ -780,17 +840,35 @@
       "durationMs": 1016,
       "bytes": 8611
     },
+    "fs/word/daraj": {
+      "text": "دَرَج.",
+      "hash": "b4cd07b601e42077",
+      "durationMs": 926,
+      "bytes": 7984
+    },
     "fs/word/darraja": {
       "text": "دَرَّاجَة.",
       "hash": "35bfbcd408c559c8",
       "durationMs": 1040,
       "bytes": 8820
     },
+    "fs/word/daw": {
+      "text": "ضَوْء.",
+      "hash": "3331d7800fdd1b73",
+      "durationMs": 863,
+      "bytes": 7566
+    },
     "fs/word/dhib": {
       "text": "ذِئْب.",
       "hash": "fdad9f9524ee3a29",
       "durationMs": 1040,
       "bytes": 8820
+    },
+    "fs/word/dhira": {
+      "text": "ذِرَاع.",
+      "hash": "2c03c5232979d675",
+      "durationMs": 1120,
+      "bytes": 9447
     },
     "fs/word/dhubaba": {
       "text": "ذُبَابَة.",
@@ -810,10 +888,34 @@
       "durationMs": 944,
       "bytes": 8193
     },
+    "fs/word/dimad": {
+      "text": "ضِمَاد.",
+      "hash": "3acaa55ee3c60e63",
+      "durationMs": 1025,
+      "bytes": 8820
+    },
+    "fs/word/dir": {
+      "text": "دِرْع.",
+      "hash": "87fad1a6592ba22e",
+      "durationMs": 800,
+      "bytes": 6939
+    },
     "fs/word/dubb": {
       "text": "دُبّ.",
       "hash": "350a2f67f5d867f3",
       "durationMs": 846,
+      "bytes": 7357
+    },
+    "fs/word/fidda": {
+      "text": "فِضَّة.",
+      "hash": "3d15204b877a8a71",
+      "durationMs": 846,
+      "bytes": 7357
+    },
+    "fs/word/habl": {
+      "text": "حَبْل.",
+      "hash": "caaa2d5bc212746f",
+      "durationMs": 860,
       "bytes": 7357
     },
     "fs/word/halib": {
@@ -822,11 +924,23 @@
       "durationMs": 965,
       "bytes": 8193
     },
-    "fs/word/hidha": {
-      "text": "حِذَاء.",
-      "hash": "498bcacd69b12a54",
-      "durationMs": 968,
-      "bytes": 8402
+    "fs/word/hamama": {
+      "text": "حَمَامَة.",
+      "hash": "242d2f6f6b4eef04",
+      "durationMs": 1120,
+      "bytes": 9447
+    },
+    "fs/word/hatafa": {
+      "text": "هَتَفَ.",
+      "hash": "1d2b4424cf44168b",
+      "durationMs": 864,
+      "bytes": 7566
+    },
+    "fs/word/hatala": {
+      "text": "هَطَلَ.",
+      "hash": "4e7de50dd995b510",
+      "durationMs": 822,
+      "bytes": 7148
     },
     "fs/word/hisan": {
       "text": "حِصَان.",
@@ -834,11 +948,23 @@
       "durationMs": 1040,
       "bytes": 8820
     },
-    "fs/word/inab": {
-      "text": "عِنَب.",
-      "hash": "92b56a55ac216f0b",
-      "durationMs": 876,
+    "fs/word/hut": {
+      "text": "حُوت.",
+      "hash": "9f24dcb43bbd7c93",
+      "durationMs": 960,
+      "bytes": 8193
+    },
+    "fs/word/jabal": {
+      "text": "جَبَل.",
+      "hash": "bf0e6d40c76511fb",
+      "durationMs": 873,
       "bytes": 7566
+    },
+    "fs/word/jalasa": {
+      "text": "جَلَسَ.",
+      "hash": "6bcdfab28e36300a",
+      "durationMs": 937,
+      "bytes": 7984
     },
     "fs/word/jamal": {
       "text": "جَمَل.",
@@ -852,11 +978,41 @@
       "durationMs": 934,
       "bytes": 7984
     },
-    "fs/word/jazara": {
-      "text": "جَزَرَة.",
-      "hash": "ed1f150dea98f6cc",
-      "durationMs": 928,
-      "bytes": 7984
+    "fs/word/jaysh": {
+      "text": "جَيْش.",
+      "hash": "9065e21d3e949008",
+      "durationMs": 992,
+      "bytes": 8402
+    },
+    "fs/word/jazar": {
+      "text": "جَزَر.",
+      "hash": "13cc3097df448a7e",
+      "durationMs": 880,
+      "bytes": 7566
+    },
+    "fs/word/jisr": {
+      "text": "جِسْر.",
+      "hash": "d607a4f0be9e8e9e",
+      "durationMs": 880,
+      "bytes": 7566
+    },
+    "fs/word/jubn": {
+      "text": "جُبْن.",
+      "hash": "bd303794b95b5e33",
+      "durationMs": 849,
+      "bytes": 7357
+    },
+    "fs/word/kas": {
+      "text": "كَأْس.",
+      "hash": "8b520192c3e9f005",
+      "durationMs": 855,
+      "bytes": 7357
+    },
+    "fs/word/kazama": {
+      "text": "كَظَمَ.",
+      "hash": "54a1922cba26d8f5",
+      "durationMs": 880,
+      "bytes": 7566
     },
     "fs/word/kharuf": {
       "text": "خَرُوف.",
@@ -864,17 +1020,23 @@
       "durationMs": 1023,
       "bytes": 8820
     },
+    "fs/word/khawkh": {
+      "text": "خَوْخ.",
+      "hash": "cdfef0c5367f225f",
+      "durationMs": 1120,
+      "bytes": 9447
+    },
     "fs/word/khayma": {
       "text": "خَيْمَة.",
       "hash": "593c0a5a7443d0f1",
       "durationMs": 894,
       "bytes": 7775
     },
-    "fs/word/khayt": {
-      "text": "خَيْط.",
-      "hash": "ad273aa8af6b9b71",
-      "durationMs": 1120,
-      "bytes": 9447
+    "fs/word/khiyar": {
+      "text": "خِيَار.",
+      "hash": "51c122a3ef5d3430",
+      "durationMs": 872,
+      "bytes": 7566
     },
     "fs/word/khubz": {
       "text": "خُبْز.",
@@ -882,23 +1044,47 @@
       "durationMs": 842,
       "bytes": 7357
     },
-    "fs/word/milh": {
-      "text": "مِلْح.",
-      "hash": "d131312f5840807e",
-      "durationMs": 852,
+    "fs/word/mawj": {
+      "text": "مَوْج.",
+      "hash": "2506c7e81b9867f8",
+      "durationMs": 984,
+      "bytes": 8402
+    },
+    "fs/word/mithl": {
+      "text": "مِثْل.",
+      "hash": "2a49c108ea184039",
+      "durationMs": 855,
       "bytes": 7357
     },
-    "fs/word/nahla": {
-      "text": "نَحْلَة.",
-      "hash": "952b3f9c28f43342",
-      "durationMs": 880,
-      "bytes": 7566
+    "fs/word/musht": {
+      "text": "مُشْط.",
+      "hash": "07e94d25bb00c871",
+      "durationMs": 960,
+      "bytes": 8193
     },
-    "fs/word/najma": {
-      "text": "نَجْمَة.",
-      "hash": "8098d9f2a48a0356",
-      "durationMs": 880,
-      "bytes": 7566
+    "fs/word/naba": {
+      "text": "نَبَأ.",
+      "hash": "ebd322aea14798f8",
+      "durationMs": 825,
+      "bytes": 7148
+    },
+    "fs/word/nabd": {
+      "text": "نَبْض.",
+      "hash": "52adc185f069dbe5",
+      "durationMs": 918,
+      "bytes": 7984
+    },
+    "fs/word/nafadha": {
+      "text": "نَفَذَ.",
+      "hash": "cc383bef66ac1d1b",
+      "durationMs": 944,
+      "bytes": 8193
+    },
+    "fs/word/najaha": {
+      "text": "نَجَحَ.",
+      "hash": "1565ea8bbe152a28",
+      "durationMs": 1040,
+      "bytes": 8820
     },
     "fs/word/nazzara": {
       "text": "نَظَّارَة.",
@@ -906,35 +1092,71 @@
       "durationMs": 1097,
       "bytes": 9238
     },
-    "fs/word/qamar": {
-      "text": "قَمَر.",
-      "hash": "3affaac474cb9939",
-      "durationMs": 786,
-      "bytes": 6939
+    "fs/word/qafaza": {
+      "text": "قَفَزَ.",
+      "hash": "b9a3b895cb700815",
+      "durationMs": 863,
+      "bytes": 7566
     },
-    "fs/word/qitta": {
-      "text": "قِطَّة.",
-      "hash": "3d0b6a1c4f990014",
-      "durationMs": 761,
+    "fs/word/qamis": {
+      "text": "قَمِيص.",
+      "hash": "1b780b3608258dc3",
+      "durationMs": 989,
+      "bytes": 8402
+    },
+    "fs/word/qasr": {
+      "text": "قَصْر.",
+      "hash": "f1932bbaa84a913d",
+      "durationMs": 767,
       "bytes": 6730
     },
-    "fs/word/rajul": {
-      "text": "رَجُل.",
-      "hash": "6836da9e7f53bd15",
-      "durationMs": 852,
+    "fs/word/qird": {
+      "text": "قِرْد.",
+      "hash": "eb8764b277e49536",
+      "durationMs": 728,
+      "bytes": 6312
+    },
+    "fs/word/rayhan": {
+      "text": "رَيْحَان.",
+      "hash": "c202fc6269391ceb",
+      "durationMs": 1076,
+      "bytes": 9238
+    },
+    "fs/word/rijl": {
+      "text": "رِجْل.",
+      "hash": "e1eb91efb0d8ffdf",
+      "durationMs": 837,
       "bytes": 7357
     },
-    "fs/word/risha": {
-      "text": "رِيشَة.",
-      "hash": "8617ccde288b5eab",
-      "durationMs": 858,
-      "bytes": 7357
+    "fs/word/rish": {
+      "text": "رِيش.",
+      "hash": "017eabb7011197c0",
+      "durationMs": 896,
+      "bytes": 7775
     },
-    "fs/word/ruzz": {
-      "text": "رُزّ.",
-      "hash": "d28ff72c79be8275",
-      "durationMs": 875,
+    "fs/word/sadr": {
+      "text": "صَدْر.",
+      "hash": "d9baf3d10af58a06",
+      "durationMs": 880,
       "bytes": 7566
+    },
+    "fs/word/safina": {
+      "text": "سَفِينَة.",
+      "hash": "240011954153ed66",
+      "durationMs": 1032,
+      "bytes": 8820
+    },
+    "fs/word/sakaba": {
+      "text": "سَكَبَ.",
+      "hash": "747734b6b13b0acb",
+      "durationMs": 946,
+      "bytes": 8193
+    },
+    "fs/word/sakhra": {
+      "text": "صَخْرَة.",
+      "hash": "5a6e07222912d2f3",
+      "durationMs": 917,
+      "bytes": 7984
     },
     "fs/word/samaka": {
       "text": "سَمَكَة.",
@@ -960,23 +1182,59 @@
       "durationMs": 1085,
       "bytes": 9238
     },
+    "fs/word/shajar": {
+      "text": "شَجَر.",
+      "hash": "10ee7ad7fb5e90ea",
+      "durationMs": 879,
+      "bytes": 7566
+    },
     "fs/word/shajara": {
       "text": "شَجَرَة.",
       "hash": "cc20ba3511e75200",
       "durationMs": 931,
       "bytes": 7984
     },
-    "fs/word/shama": {
-      "text": "شَمْعَة.",
-      "hash": "c1210d92e76affb9",
-      "durationMs": 867,
-      "bytes": 7566
-    },
     "fs/word/shams": {
       "text": "شَمْس.",
       "hash": "914bb2caacdea470",
       "durationMs": 910,
       "bytes": 7775
+    },
+    "fs/word/sharh": {
+      "text": "شَرْح.",
+      "hash": "ce632caef6fe8b61",
+      "durationMs": 916,
+      "bytes": 7984
+    },
+    "fs/word/shawka": {
+      "text": "شَوْكَة.",
+      "hash": "feebf80a74756920",
+      "durationMs": 1120,
+      "bytes": 9447
+    },
+    "fs/word/shumu": {
+      "text": "شُمُوع.",
+      "hash": "bacf81d520bba68e",
+      "durationMs": 997,
+      "bytes": 8611
+    },
+    "fs/word/sinjab": {
+      "text": "سِنْجَاب.",
+      "hash": "bffe69f55d430ff1",
+      "durationMs": 1013,
+      "bytes": 8611
+    },
+    "fs/word/sinnara": {
+      "text": "صِنَّارَة.",
+      "hash": "78192ec2529fe944",
+      "durationMs": 1033,
+      "bytes": 8820
+    },
+    "fs/word/suhub": {
+      "text": "سُحُب.",
+      "hash": "56311ba4c323d92d",
+      "durationMs": 921,
+      "bytes": 7984
     },
     "fs/word/sulahfa": {
       "text": "سُلَحْفَاة.",
@@ -996,6 +1254,12 @@
       "durationMs": 800,
       "bytes": 6939
     },
+    "fs/word/tadhkira": {
+      "text": "تَذْكِرَة.",
+      "hash": "8cd27666ae790fc0",
+      "durationMs": 913,
+      "bytes": 7775
+    },
     "fs/word/taira": {
       "text": "طَائِرَة.",
       "hash": "2823e4c01c80d58e",
@@ -1008,9 +1272,9 @@
       "durationMs": 875,
       "bytes": 7566
     },
-    "fs/word/tamatim": {
-      "text": "طَمَاطِم.",
-      "hash": "31838abd2e363c13",
+    "fs/word/tayyar": {
+      "text": "طَيَّار.",
+      "hash": "2f858af1ba1fd793",
       "durationMs": 994,
       "bytes": 8611
     },
@@ -1026,11 +1290,41 @@
       "durationMs": 914,
       "bytes": 7775
     },
-    "fs/word/thum": {
-      "text": "ثُوم.",
-      "hash": "11fedbaf0df788a4",
-      "durationMs": 838,
+    "fs/word/thawb": {
+      "text": "ثَوْب.",
+      "hash": "f5f90c829a169791",
+      "durationMs": 840,
       "bytes": 7357
+    },
+    "fs/word/thimar": {
+      "text": "ثِمَار.",
+      "hash": "769ca4d4076bc4c4",
+      "durationMs": 929,
+      "bytes": 7984
+    },
+    "fs/word/thiql": {
+      "text": "ثِقْل.",
+      "hash": "600c487a98ceee03",
+      "durationMs": 873,
+      "bytes": 7566
+    },
+    "fs/word/thuban": {
+      "text": "ثُعْبَان.",
+      "hash": "8eff25dd02911723",
+      "durationMs": 1095,
+      "bytes": 9238
+    },
+    "fs/word/tifl": {
+      "text": "طِفْل.",
+      "hash": "9b68baeb4bae5aa3",
+      "durationMs": 752,
+      "bytes": 6521
+    },
+    "fs/word/tilmidh": {
+      "text": "تِلْمِيذ.",
+      "hash": "2aacf3e63887f403",
+      "durationMs": 1040,
+      "bytes": 8820
     },
     "fs/word/timsah": {
       "text": "تِمْسَاح.",
@@ -1038,11 +1332,17 @@
       "durationMs": 1008,
       "bytes": 8611
     },
-    "fs/word/tuffaha": {
-      "text": "تُفَّاحَة.",
-      "hash": "e35e4beac2a7fb66",
-      "durationMs": 1021,
-      "bytes": 8820
+    "fs/word/tuffah": {
+      "text": "تُفَّاح.",
+      "hash": "20f651b7e33cb03e",
+      "durationMs": 1073,
+      "bytes": 9238
+    },
+    "fs/word/turuq": {
+      "text": "طُرُق.",
+      "hash": "1bec21bb7b2ba828",
+      "durationMs": 815,
+      "bytes": 7148
     },
     "fs/word/udhun": {
       "text": "أُذُن.",
@@ -1050,17 +1350,23 @@
       "durationMs": 780,
       "bytes": 6730
     },
-    "fs/word/usfur": {
-      "text": "عُصْفُور.",
-      "hash": "b61a01a597a0e9c8",
-      "durationMs": 1090,
-      "bytes": 9238
+    "fs/word/ushb": {
+      "text": "عُشْب.",
+      "hash": "d9365e9bda13c0f2",
+      "durationMs": 826,
+      "bytes": 7148
     },
-    "fs/word/yad": {
-      "text": "يَد.",
-      "hash": "270cd99d895b9729",
-      "durationMs": 782,
-      "bytes": 6730
+    "fs/word/ward": {
+      "text": "وَرْد.",
+      "hash": "417527b1e586a5e3",
+      "durationMs": 880,
+      "bytes": 7566
+    },
+    "fs/word/waz": {
+      "text": "وَعْظ.",
+      "hash": "65e8d70f1b62f947",
+      "durationMs": 908,
+      "bytes": 7775
     },
     "fs/word/zabi": {
       "text": "ظَبْي.",
@@ -1086,11 +1392,29 @@
       "durationMs": 854,
       "bytes": 7357
     },
+    "fs/word/zayt": {
+      "text": "زَيْت.",
+      "hash": "0d11b3eb885d0c02",
+      "durationMs": 938,
+      "bytes": 7984
+    },
     "fs/word/zaytun": {
       "text": "زَيْتُون.",
       "hash": "ef1bccf9c0c0d604",
       "durationMs": 1001,
       "bytes": 8611
+    },
+    "fs/word/zubda": {
+      "text": "زُبْدَة.",
+      "hash": "f333870da5e7db3e",
+      "durationMs": 1040,
+      "bytes": 8820
+    },
+    "fs/word/zufr": {
+      "text": "ظُفْر.",
+      "hash": "ea83eb729e4605a8",
+      "durationMs": 840,
+      "bytes": 7357
     }
   }
 }

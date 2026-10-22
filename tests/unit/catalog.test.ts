@@ -66,7 +66,7 @@ describe('question bank', () => {
       const ids = q.options.map((o) => o.id)
       expect(new Set(ids).size, q.key).toBe(ids.length)
       expect(ids, q.key).toContain(q.answer)
-      expect(q.options.length, q.key).toBe(3)
+      if (q.topic !== 'form') expect(q.options.length, q.key).toBe(3)
     }
   })
 
@@ -95,14 +95,22 @@ describe('question bank', () => {
     }
   })
 
-  it('asks for the letter shape the word really needs', () => {
+  it('asks for the letter shape the word really needs, among the book shapes', () => {
+    const nonJoining = new Set('أ د ذ ر ز'.split(' '))
     for (const q of QUESTIONS.filter((entry) => entry.topic === 'form')) {
       const { letters, index } = q.gap!
+      const char = letters[index]!
       expect(q.answer, q.key).toBe(positionIn(letters, index))
       const right = q.options.find((o) => o.id === q.answer)!
-      expect(right.art, q.key).toBe(`txt:${formOf(letters[index]!, positionIn(letters, index))}`)
-      expect(new Set(q.options.map((o) => o.art)).size, q.key).toBe(3)
+      expect(right.art, q.key).toBe(`txt:${formOf(char, positionIn(letters, index))}`)
+      // Four shapes, as in «أختار - أكمل»; two for letters that never join the next one.
+      expect(new Set(q.options.map((o) => o.art)).size, q.key).toBe(nonJoining.has(char) ? 2 : 4)
+      expect(TEST_LETTERS, q.key).toContain(char)
     }
+  })
+
+  it('asks the shape of every test letter at least once', () => {
+    for (const char of TEST_LETTERS) expect(QUESTIONS.some((q) => q.topic === 'form' && q.gap!.letters[q.gap!.index] === char), char).toBe(true)
   })
 
   it('knows Arabic joining: بطة starts joined, كتاب ends alone, خبز is joined in the middle', () => {
@@ -115,13 +123,12 @@ describe('question bank', () => {
     expect(joinedPieces(lettersOf('خبز'))).toEqual(['خ‍', '‍ب‍', '‍ز'])
   })
 
-  it('builds words only from the test letters, with short vowels', () => {
+  it('builds three-letter words with short vowels, each using a test letter', () => {
     for (const blend of BLENDS) {
       expect(blend.syllables.join(''), blend.id).toBe(blend.word)
-      for (const syllable of blend.syllables) {
-        expect(TEST_LETTERS, `${blend.id} ${syllable}`).toContain(syllable.charAt(0))
-        expect(syllable, `${blend.id} ${syllable}`).toMatch(/^.[َُِ]$/)
-      }
+      expect(blend.syllables.length, blend.id).toBe(3)
+      for (const syllable of blend.syllables) expect(syllable, `${blend.id} ${syllable}`).toMatch(/^.[َُِ]$/)
+      expect(blend.syllables.some((syllable) => TEST_LETTERS.includes(syllable.charAt(0))), blend.id).toBe(true)
     }
   })
 

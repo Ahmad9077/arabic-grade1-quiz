@@ -204,7 +204,7 @@ export function QuizScreen({ round, intro, onExit, onFinish }: QuizScreenProps) 
           <h1 className="prompt">{question.prompt}</h1>
         </div>
 
-        {question.subject || question.syllables ? (
+        {question.subject || question.syllables || question.gap ? (
           <div className={`subject pop ${subjectKind(question.subject ?? 'txt:')}`} style={order(0, { '--base-delay': '80ms' })} aria-hidden={!question.tap}>
             {question.subject ? (
               <span className="subject-art">
