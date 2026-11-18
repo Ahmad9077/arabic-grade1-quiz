@@ -17,8 +17,6 @@ interface HomeProps {
 }
 
 export function Home({ progress, muted, onToggleSound, onOpenTopic, onStartTest }: HomeProps) {
-  const testCount = TEST_SIZE
-
   return (
     <main className="screen home">
       <header className="top-bar">
@@ -37,13 +35,14 @@ export function Home({ progress, muted, onToggleSound, onOpenTopic, onStartTest 
           </span>
           <span className="test-banner-text">
             <span className="test-banner-title">الاختبار التجريبي</span>
-            <span className="test-banner-sub">{arabicNumber(testCount)} سؤالا من كل الدروس</span>
+            <span className="test-banner-sub">{arabicNumber(TEST_SIZE)} سؤالا بترتيب أسئلة الاختبار</span>
             <Stars count={progress.stars.test ?? 0} size="sm" />
           </span>
         </button>
 
         <h2 className="section-title rise" style={order(1)}>
-          الدروس
+          أسئلة الاختبار
+          <span className="section-sub">الوحدة الثالثة · كتاب الجزء الثاني ص ١٤٥–١٩٦ · الأحد ٢٢ نوفمبر</span>
         </h2>
 
         <div className="topic-grid">
@@ -60,6 +59,7 @@ export function Home({ progress, muted, onToggleSound, onOpenTopic, onStartTest 
                 <Art art={topic.art[0] ?? ''} className="art-back" />
                 <Art art={topic.art[1] ?? ''} className="art-front" />
               </span>
+              <span className="topic-card-number">{arabicNumber(index + 1)}</span>
               <span className="topic-card-title">{topic.title}</span>
               <span className="topic-card-foot">
                 <Stars count={progress.stars[topic.id] ?? 0} size="sm" />

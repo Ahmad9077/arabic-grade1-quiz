@@ -32,8 +32,8 @@ SETTINGS = {'stability': 0.5, 'similarity_boost': 0.8, 'style': 0.2}
 # Explanations and single letters are read a little slower so a young learner can follow them.
 SPEED = {
     # Words are read a little slower so heavy letters (ص ض ط ظ) keep their weight.
-    'fs/name/': 0.9, 'fs/where/': 0.9, 'fs/starts/': 0.9, 'fs/dots/': 0.88, 'fs/word/': 0.85, 'fs/blend/': 0.85,
-    'ar/q/': 0.94, 'ar/t/': 0.92, 'ar/ui/': 0.96,
+    'fs/name/': 0.9, 'fs/starts/': 0.9, 'fs/word/': 0.85, 'fs/blend/': 0.85, 'fs/sentence/': 0.82,
+    'ar/q/': 0.94, 'ar/ui/': 0.96,
 }
 SAFETY_MARGIN = 400
 CREDITS_PER_CHAR = 0.34
@@ -52,6 +52,16 @@ def request(url, key, body=None):
     req = urllib.request.Request(url, data=data, headers={'xi-api-key': key, 'Content-Type': 'application/json'})
     with urllib.request.urlopen(req, timeout=90) as response:
         return response.read()
+
+
+def with_retries(call, attempts=3):
+    """A slow connection can time out one request: try it again before giving up."""
+    for attempt in range(attempts):
+        try:
+            return call()
+        except OSError:
+            if attempt == attempts - 1:
+                raise
 
 
 def settings_for(cue_id):
@@ -106,8 +116,16 @@ def main():
         return
 
     key = api_key()
-    sub = json.loads(request('https://api.elevenlabs.io/v1/user/subscription', key))
-    remaining = sub['character_limit'] - sub['character_count']
+    try:
+        sub = json.loads(request('https://api.elevenlabs.io/v1/user/subscription', key))
+        remaining = sub['character_limit'] - sub['character_count']
+    except OSError:
+        # The balance endpoint can time out while speech still works: go on only with a balance
+        # read by hand (ELEVEN_KNOWN_REMAINING), never with a guess.
+        known = os.environ.get('ELEVEN_KNOWN_REMAINING')
+        if not known:
+            sys.exit('Could not read the credit balance; set ELEVEN_KNOWN_REMAINING to the balance shown in ElevenLabs.')
+        remaining = int(known)
     # eleven_v4 bills about a quarter credit per character in Arabic and English (measured Oct 2026); plan for a third.
     estimate = round(cost * CREDITS_PER_CHAR)
     if estimate + SAFETY_MARGIN > remaining:
@@ -120,10 +138,10 @@ def main():
         cached = not force and os.path.exists(raw_path + '.hash') and os.path.exists(raw_path) \
             and open(raw_path + '.hash').read() == text_hash(cue['text'], cue['id'])
         if not cached:
-            audio = request(
+            audio = with_retries(lambda: request(
                 f"https://api.elevenlabs.io/v1/text-to-speech/{voice_for(cue['id'])['id']}?output_format=mp3_44100_128", key,
                 {'text': cue['text'], 'model_id': MODEL, 'language_code': voice_for(cue['id'])['language'], 'voice_settings': settings_for(cue['id'])},
-            )
+            ))
             with open(raw_path, 'wb') as handle:
                 handle.write(audio)
             with open(raw_path + '.hash', 'w') as handle:

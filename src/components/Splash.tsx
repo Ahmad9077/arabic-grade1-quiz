@@ -1,7 +1,7 @@
 import { Art } from '../art/Art'
 import { BigButton, PreviewBadge, order } from './ui'
 
-const ORBIT = ['🦁', 'txt:ب', '🐪', 'txt:ج', '🐟', 'txt:س', '🦒', 'txt:ط']
+const ORBIT = ['🦌', 'txt:غ', '🐘', 'txt:ق', '📖', 'txt:م', '🌴', 'txt:ي']
 
 export function Splash({ onStart }: { onStart: () => void }) {
   return (

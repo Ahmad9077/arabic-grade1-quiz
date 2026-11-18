@@ -3,10 +3,11 @@ import { Art } from '../art/Art'
 import { burst } from '../art/confetti'
 import { useNarrator } from '../audio/NarratorContext'
 import { sfx } from '../audio/sfx'
-import { QUESTIONS, clip } from '../data/catalog'
+import { FORMATS, type Question } from '../data/catalog'
 import { TONES, toneStyle } from '../data/tones'
 import { arabicNumber } from '../domain/format'
 import { starsFor } from '../domain/round'
+import { doneLine } from '../domain/voice'
 import type { Attempt } from '../hub/bridge'
 import type { Round } from './QuizScreen'
 import { BigButton, StarIcon, order } from './ui'
@@ -25,14 +26,15 @@ export function ResultsScreen({ round, attempts, onAgain, onHome }: ResultsProps
   const stars = starsFor(score, total)
   const missed = attempts
     .filter((attempt) => !attempt.correct)
-    .map((attempt) => QUESTIONS.find((question) => question.key === attempt.questionKey))
-    .filter((question) => question !== undefined)
+    // The questions as this round drew them.
+    .map((attempt) => round.questions.find((question) => question.key === attempt.questionKey))
+    .filter((question): question is Question => question !== undefined)
 
   useEffect(() => {
     const timers = [1, 2, 3].filter((n) => n <= stars).map((n) => window.setTimeout(() => sfx.star(), 350 + n * 260))
     timers.push(
       window.setTimeout(() => {
-        void narrator.play([{ clip: clip.ui(stars === 3 ? 'done-great' : 'done-good') }])
+        void narrator.play([{ clip: doneLine(stars === 3).clip }])
         if (stars >= 2) burst(TONES[round.tone].tone)
       }, 1200),
     )
@@ -75,15 +77,15 @@ export function ResultsScreen({ round, attempts, onAgain, onHome }: ResultsProps
           <h2 className="review-title">خلينا نتذكر</h2>
           <ul className="review-list">
             {missed.map((question) => {
-              const art = question.subject ?? (question.syllables ? `txt:${question.syllables.join('')}` : '💡')
+              const art = question.subject ?? (question.format === 'blend' ? '🧩' : question.format === 'copy' ? '✏️' : '💡')
               return (
                 <li key={question.key} className="review-item" style={toneStyle(question.topic)}>
                   <span className="review-art" aria-hidden="true">
                     <Art art={art} />
                   </span>
                   <span className="review-text">
-                    <span className="review-q">{question.prompt}</span>
-                    <span className="review-fact">{question.explain[0]!.text.replaceAll('\n', ' · ')}</span>
+                    <span className="review-q">{FORMATS[question.format].instruction}</span>
+                    <span className="review-fact">{question.note}</span>
                   </span>
                 </li>
               )

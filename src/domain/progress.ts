@@ -1,6 +1,7 @@
 import { QUIZ_ID, type TopicId } from '../data/catalog'
 
-const STORAGE_KEY = `${QUIZ_ID}:progress:v1`
+// v2: the second test (22 November 2026) has new lessons and question keys.
+const STORAGE_KEY = `${QUIZ_ID}:progress:v2`
 const RECENT_LIMIT = 40
 
 export type StarKey = TopicId | 'test'

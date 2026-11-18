@@ -2733,3 +2733,528 @@ p {
     padding-inline: 4px;
   }
 }
+
+/* ── The second test (22 November 2026): the school paper, question by question ─────────────
+   Each question sits in a box under the book's instruction line (in the reading font, as
+   printed) and a short Kuwaiti help line with the speaker. */
+:root {
+  --box-line: var(--tone);
+  --box-tint: #fffdf8;
+  --pen: #2e5bd8;
+  --ring-good: #1f9d55;
+  --ring-miss: #d6312f;
+}
+
+.paper-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.paper-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+
+.paper-part {
+  display: inline-block;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--tint);
+  color: var(--deep);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  line-height: 1.9;
+}
+
+.paper-instruction {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-reading);
+  font-size: clamp(1.25rem, 5vw, 1.7rem);
+  font-weight: 700;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+
+.paper-help {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.paper-help p {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  color: var(--deep);
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.paper-help .speaker-button {
+  width: 52px;
+  height: 52px;
+  flex: none;
+}
+
+.paper-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 12px 18px;
+  border: 3px solid var(--box-line);
+  border-radius: 18px;
+  background: var(--box-tint);
+}
+
+.option.is-reveal::after {
+  content: none;
+}
+
+/* The pen ring, as on a marked paper. */
+.ink-ring {
+  position: absolute;
+  inset: -8px -6px;
+  width: calc(100% + 12px);
+  height: calc(100% + 16px);
+  overflow: visible;
+  pointer-events: none;
+}
+
+.ink-ring path {
+  fill: none;
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  vector-effect: non-scaling-stroke;
+  animation: ink-draw 0.55s ease-out 0.05s forwards;
+}
+
+.ink-good path {
+  stroke: var(--ring-good);
+}
+
+.ink-miss path {
+  stroke: var(--ring-miss);
+}
+
+@keyframes ink-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.option-slot {
+  position: relative;
+}
+
+/* «أنسخ الجملة بخط جميل»: the notebook strip to write on. */
+.trace-board {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.trace-pad {
+  position: relative;
+  width: 100%;
+  height: clamp(150px, 40vw, 230px);
+  border: 2px solid #cfe2f3;
+  border-radius: 12px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.trace-pad canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.trace-ink {
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.trace-board.is-good .trace-pad {
+  border-color: var(--good);
+  box-shadow: 0 0 0 4px var(--good-tint);
+}
+
+.trace-board.is-missed .trace-pad {
+  border-color: var(--miss);
+}
+
+.trace-stamp {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--good);
+  color: #ffffff;
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+.trace-tools {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.tool-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 0 22px;
+  border: var(--edge);
+  border-radius: 999px;
+  background: var(--paper);
+  box-shadow: 0 4px 0 var(--ink);
+  color: var(--ink);
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.tool-button svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tool-check {
+  background: var(--good);
+  color: #ffffff;
+}
+
+.tool-button:disabled {
+  opacity: 0.45;
+  box-shadow: 0 2px 0 var(--ink);
+}
+
+/* «أشاهد – أكتب» and «أكمل»: the picture, the box or the word, and the letter keys. */
+.missing-board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.missing-picture {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-emoji);
+  font-size: 120px;
+  line-height: 1.1;
+}
+
+.sound-box {
+  display: grid;
+  place-items: center;
+  width: 1.5em;
+  height: 1.5em;
+  border: 4px dashed var(--tone);
+  border-radius: 18px;
+  background: var(--tint);
+  color: var(--pen);
+  font-family: var(--font-reading);
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.sound-box.is-filled,
+.gap-slot.is-filled {
+  border-style: solid;
+}
+
+.sound-box.is-good,
+.gap-slot.is-good {
+  border-color: var(--good);
+  background: var(--good-tint);
+  color: var(--good-deep);
+}
+
+.sound-box.is-miss,
+.gap-slot.is-miss {
+  border-color: var(--miss);
+  background: var(--miss-tint);
+  color: var(--miss-deep);
+}
+
+.letter-keys {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  width: min(100%, 540px);
+}
+
+.letter-key {
+  min-height: 70px;
+  padding: 0 0 6px;
+  border: var(--edge);
+  border-radius: 16px;
+  background: var(--paper);
+  box-shadow: 0 4px 0 var(--ink);
+  color: var(--ink);
+  font-family: var(--font-reading);
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.letter-key.is-correct,
+.letter-key.is-reveal {
+  border-color: var(--good-deep);
+  background: var(--good-tint);
+  box-shadow: 0 4px 0 var(--good-deep), 0 0 0 4px var(--good);
+}
+
+.letter-key.is-wrong {
+  animation: shake 0.5s ease-in-out;
+  border-color: var(--miss-deep);
+  background: var(--miss-tint);
+}
+
+.letter-key.is-dim {
+  opacity: 0.4;
+}
+
+/* «أركب»: the letters with their vowels, joined with plus signs, and the box for the word. */
+.build-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  direction: rtl;
+}
+
+.build-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.build-tile {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.3em;
+  padding: 0.05em 0.2em 0;
+  border: var(--edge);
+  border-radius: 16px;
+  background: #eaf3fb;
+  box-shadow: var(--lift);
+  color: var(--ink);
+  font-family: var(--font-reading);
+  font-size: 3.4rem;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.build-sign {
+  color: var(--leaf-deep, var(--deep));
+  font-size: 2.4rem;
+  font-weight: 900;
+}
+
+.build-answer {
+  display: inline-grid;
+  place-items: center;
+  min-width: 3em;
+  min-height: 1.6em;
+  padding: 0 0.3em;
+  border: 3px dashed var(--tone);
+  border-radius: 16px;
+  background: var(--paper);
+  font-family: var(--font-reading);
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.build-answer.is-filled {
+  border-style: solid;
+  border-color: var(--good);
+  background: var(--good-tint);
+  color: var(--good-deep);
+}
+
+/* Feedback: the right answer in words. */
+.feedback-note {
+  margin: 0;
+  font-family: var(--font-reading);
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.feedback-note:empty {
+  display: none;
+}
+
+.first-letter {
+  color: var(--miss-deep);
+}
+
+.note-sep {
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+}
+
+.feedback-encourage {
+  margin: 0;
+  color: var(--ink-soft);
+  font-weight: 800;
+}
+
+/* Home: five questions, in the card's order; the fifth spans the row. */
+.section-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+}
+
+.section-sub {
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.topic-card {
+  position: relative;
+}
+
+.topic-card-number {
+  position: absolute;
+  top: 10px;
+  inset-inline-start: 12px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  background: var(--paper);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+@media (min-width: 640px) {
+  .topic-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.topic-grid > .topic-card:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 480px) {
+  .paper-box {
+    padding: 14px 8px 16px;
+  }
+
+  .missing-picture {
+    font-size: 100px;
+  }
+
+  .sound-box {
+    font-size: 3.2rem;
+  }
+
+  .gap-word {
+    font-size: 3.4rem;
+  }
+
+  .letter-key {
+    min-height: 60px;
+    font-size: 2.1rem;
+  }
+
+  .build-tile {
+    font-size: 2.6rem;
+  }
+
+  .build-sign {
+    font-size: 1.8rem;
+  }
+
+  .build-answer {
+    font-size: 2rem;
+  }
+}
+
+@media (min-width: 760px) {
+  .paper-instruction {
+    font-size: 1.9rem;
+  }
+
+  .paper-help p {
+    font-size: 1.35rem;
+  }
+
+  .paper-box {
+    padding: 24px 22px 26px;
+    gap: 22px;
+  }
+
+  .trace-pad {
+    height: 300px;
+  }
+
+  .missing-picture {
+    font-size: 190px;
+  }
+
+  .sound-box {
+    font-size: 5rem;
+  }
+
+  .gap-word {
+    font-size: 5.4rem;
+  }
+
+  .letter-keys {
+    width: min(100%, 680px);
+    gap: 12px;
+  }
+
+  .letter-key {
+    min-height: 88px;
+    font-size: 3.2rem;
+  }
+
+  .tool-button {
+    min-height: 64px;
+    font-size: 1.3rem;
+  }
+
+  .build-tile {
+    font-size: 4.4rem;
+  }
+
+  .build-answer {
+    font-size: 3.4rem;
+  }
+}

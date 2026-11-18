@@ -1,71 +1,56 @@
 import { expect, test } from '@playwright/test'
-import { answer, start } from './helpers'
+import { practiceSize } from '../../src/domain/round'
+import { answer, current, start } from './helpers'
 
 // Visual review captures: run with SCREENS=1 npx playwright test screens
-// (SCREENS_TOPIC picks the lesson, default missing).
-const path = '/'
-const topic = process.env.SCREENS_TOPIC ?? 'find'
+// (SCREENS_TOPIC picks one lesson; by default every lesson and the mock test).
 test.skip(!process.env.SCREENS, 'screenshots only on request')
 
-test('capture every screen', async ({ page }, info) => {
+const TOPICS = process.env.SCREENS_TOPIC ? [process.env.SCREENS_TOPIC] : ['picture', 'sound', 'missing', 'blend', 'handwriting']
+
+test('capture the splash, home and results', async ({ page }, info) => {
   test.setTimeout(120_000)
-  const shot = (name: string) => page.screenshot({ path: `test-results/screens/${topic}-${info.project.name}-${name}.png`, fullPage: !name.match(/question|correct|wrong|q4/) })
-  await page.goto(path)
+  const shot = (name: string) => page.screenshot({ path: `test-results/screens/${info.project.name}-${name}.png`, fullPage: true })
+  await page.goto('/')
   await page.waitForTimeout(1500)
   await shot('1-splash')
-  await start(page, path)
+  await start(page)
   await page.waitForTimeout(1200)
   await shot('2-home')
-  await page.locator(`.topic-card[data-topic="${topic}"]`).click()
-  await page.waitForTimeout(1300)
-  await shot('5-question')
-  await answer(page, true)
-  await page.waitForTimeout(1200)
-  await shot('6-correct')
-  await page.locator('.next-button').click()
-  await page.waitForTimeout(1300)
-  await shot('7-question2')
-  await answer(page, false)
-  await page.waitForTimeout(1500)
-  await shot('8-wrong')
-  for (let n = 2; n < 8; n += 1) {
+  await page.locator('.test-banner').click()
+  for (let n = 0; n < 12; n += 1) {
+    await page.waitForTimeout(500)
+    if (n === 0) await page.screenshot({ path: `test-results/screens/${info.project.name}-3-test-first.png` })
+    await answer(page, n % 4 !== 3)
     await page.locator('.next-button').click()
-    await answer(page, n % 3 !== 0)
-    if (n === 4) await shot(`9-q${n}`)
   }
-  await page.locator('.next-button').click()
   await expect(page.locator('.results-card')).toBeVisible()
-  await page.waitForTimeout(2500)
-  await shot('10-results')
+  await page.waitForTimeout(2600)
+  await shot('4-results')
 })
 
-test('capture a matching board', async ({ page }, info) => {
-  test.setTimeout(180_000)
-  const shot = (name: string) => page.screenshot({ path: `test-results/screens/board-${topic}-${info.project.name}-${name}.png` })
-  await start(page, path)
-  for (let round = 0; round < 4; round += 1) {
-    await page.locator(`.topic-card[data-topic="${topic}"]`).click()
-    for (let n = 0; n < 8; n += 1) {
-      await page.waitForTimeout(700)
-      const board = page.locator('section.question .match-board')
-      if (await board.count()) {
-        const left = board.locator('.match-first')
-        const pairId = await left.first().getAttribute('data-pair')
-        await left.first().click()
-        await page.waitForTimeout(400)
-        await shot('1-selected')
-        await board.locator(`.match-second[data-pair="${pairId}"]`).click()
-        await page.waitForTimeout(700)
-        await shot('2-one-line')
-        await answer(page, true)
-        await page.waitForTimeout(1400)
-        await shot('3-done')
-        return
+for (const topic of TOPICS) {
+  test(`capture every question style of ${topic}`, async ({ page }, info) => {
+    test.setTimeout(240_000)
+    await start(page)
+    const seen = new Set<string>()
+    for (let round = 0; round < 3; round += 1) {
+      await page.locator(`.topic-card[data-topic="${topic}"]`).click()
+      for (let n = 0; n < practiceSize(topic as Parameters<typeof practiceSize>[0]); n += 1) {
+        await page.waitForTimeout(900)
+        const { question } = await current(page, false)
+        const fresh = !seen.has(question.format)
+        if (fresh) await page.screenshot({ path: `test-results/screens/${topic}-${info.project.name}-${question.format}-a.png` })
+        await answer(page, fresh ? seen.size % 2 === 0 : true)
+        if (fresh) {
+          await page.waitForTimeout(1300)
+          await page.screenshot({ path: `test-results/screens/${topic}-${info.project.name}-${question.format}-b.png` })
+          seen.add(question.format)
+        }
+        await page.locator('.next-button').click()
       }
-      await answer(page, true)
-      await page.locator('.next-button').click()
+      await expect(page.locator('.results-card')).toBeVisible()
+      await page.getByRole('button', { name: /الدروس/ }).click()
     }
-    await page.getByRole('button', { name: /الدروس/ }).click()
-  }
-  throw new Error('No matching board came up')
-})
+  })
+}

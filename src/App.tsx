@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { wakeAudio } from './audio/context'
+import { wakeAudio, watchAudio } from './audio/context'
 import { Narrator } from './audio/player'
 import { NarratorContext } from './audio/NarratorContext'
 import { setSfxEnabled } from './audio/sfx'
-import { TOPICS, clip, type TopicId } from './data/catalog'
+import { arLines, type TopicId } from './data/catalog'
 import { loadProgress, recordRound, saveProgress, type SavedProgress } from './domain/progress'
 import { buildPractice, buildTest, starsFor } from './domain/round'
+import { sayLine } from './domain/voice'
 import type { BootstrapContext } from './hub/bootstrap'
 import type { Attempt, HubBridge } from './hub/bridge'
 import { Home } from './components/Home'
@@ -57,17 +58,14 @@ export default function App({ context, bridge }: { context: BootstrapContext; br
     window.scrollTo({ top: 0 })
   }, [screen])
 
-  // Any tap wakes audio that the browser paused (for example after switching apps).
-  useEffect(() => {
-    window.addEventListener('pointerdown', wakeAudio, { passive: true })
-    return () => window.removeEventListener('pointerdown', wakeAudio)
-  }, [])
+  // Any tap brings back sound the browser took away (for example after switching apps).
+  useEffect(() => watchAudio(), [])
 
   const start = useCallback(() => {
     wakeAudio()
     setScreen({ name: 'home' })
-    void narrator.play([{ clip: clip.ui('welcome') }])
-    narrator.preload([...TOPICS.map((topic) => clip.topic(topic.id)), clip.ui('test-intro')])
+    void narrator.play([{ clip: sayLine('welcome').clip }])
+    narrator.preload(arLines('test-intro').map((line) => line.clip))
   }, [narrator])
 
   const startPractice = useCallback(
@@ -106,7 +104,7 @@ export default function App({ context, bridge }: { context: BootstrapContext; br
   return (
     <NarratorContext.Provider value={narrator}>
       <div className="paper" aria-hidden="true">
-        {['أ', 'ب', 'ج', 'ح', 'د', 'س', 'ص', 'ط'].map((glyph, n) => (
+        {['غ', 'ف', 'ق', 'ك', 'ل', 'م', 'ن', 'ي'].map((glyph, n) => (
           <span key={n} className={`float-glyph glyph-${n + 1}`}>
             {glyph}
           </span>
@@ -126,7 +124,7 @@ export default function App({ context, bridge }: { context: BootstrapContext; br
         {screen.name === 'quiz' ? (
           <QuizScreen
             round={screen.round}
-            intro={screen.round.kind === 'test' ? clip.ui('test-intro') : clip.topic(screen.round.tone as TopicId)}
+            intro={screen.round.kind === 'test'}
             onExit={goHome}
             onFinish={(attempts) => finishRound(screen.round, attempts)}
           />

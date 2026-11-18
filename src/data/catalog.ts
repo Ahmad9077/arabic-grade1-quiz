@@ -1,62 +1,133 @@
-// Content for «اللغة العربية - الأول الابتدائي» — the first Arabic test (Sunday 25 Oct 2026).
-// The school's card: units 1 and 2, the letters from أ to ظ, and six skills —
-//   1. join a letter to the picture it starts   → topic `picture` (letter → picture, boards)
-//   2. circle the letter in a word              → topic `find`
-//   3. write the letter a picture starts with   → topic `picture` (picture → letter)
-//   4. complete a word with the right letter form → topic `form`
-//   5. build a word from ordered letters with short vowels → topic `blend`
-//   6. copy two letters                         → topic `copy`
+// Content for «اللغة العربية - الأول الابتدائي» — the second short Arabic test (Sunday 22 Nov 2026).
+// The school's card (Mishref Primary, girls): unit 3 of the Ministry book «لغتي العربية», Grade 1,
+// term 1, part 2 (2026/2027), pages 145–196: the letters غ ف ق ك ل م ن ه و ي, and five skills —
+//   1. تحديد الصورة المناسبة للحرف المحدد     → topic `picture`     (a letter, three pictures)
+//   2. كتابة صوت الحرف الدال على الصورة      → topic `sound`       (a picture, write its first letter)
+//   3. إكمال الكلمة بالحرف الناقص            → topic `missing`     (the book's «أكمل» words)
+//   4. تركيب الحروف لتكوين كلمة              → topic `blend`       (the book's «أركب» rows)
+//   5. نسخ جملة بخط جميل                    → topic `handwriting` (the book's «أقرأ» sentences)
+// Each question carries the book's own instruction line (Modern Standard Arabic, as printed in the
+// unit's review on pages 195–196); the mock test follows the card's order, «السؤال الأول» to
+// «السؤال الخامس».
 //
-// Voices: letters, words and syllables in Modern Standard Arabic (Layla, the approved Arabic
-// phonics reference) with full diacritics so ظ, ض, ذ and ث keep their sounds; instructions and
-// cheers in Kuwaiti dialect (Maryam), sent without diacritics. Screen text has no diacritics
-// except where the short vowels are the thing being learned (the blend topic).
-// Wording never speaks to a girl or a boy. Question keys are permanent Hub identifiers.
+// Voices: letters, words and sentences in Modern Standard Arabic with full diacritics (Layla, the
+// approved Arabic phonics voice); everything else in Kuwaiti (Maryam), written for this quiz only,
+// several lines for every moment, dealt so the same words do not come twice running. Spoken lines
+// carry no «…» (the voice reads it as a sigh). Wording never speaks to a girl or a boy.
+// Question keys are permanent Hub identifiers: never rename or reuse one.
 // This file is self-contained so Node scripts can import it directly.
 
 export const QUIZ_ID = 'arabic-grade1'
 
-export type TopicId = 'picture' | 'find' | 'form' | 'blend' | 'copy'
-export type QuestionKind = 'pick' | 'match' | 'tap'
+export type TopicId = 'picture' | 'sound' | 'missing' | 'blend' | 'handwriting'
+export type QuestionKind = 'pick' | 'keys' | 'trace'
+export type Format = 'pic-for-letter' | 'letter-sound' | 'missing' | 'blend' | 'copy'
 
-/** An emoji, `txt:<text>` (letters or words in the reading font) or `pair:<a> <b>` (two letters). */
+/** An emoji, or `txt:<text>` (letters or words in the reading font). */
 export type ArtRef = string
 
+export type Random = () => number
+
+export interface Option {
+  id: string
+  art: ArtRef
+  /** Accessible name. */
+  label: string
+  /** Said while the tile lights up after the question (picture names). */
+  clip?: string
+}
+
+/** A clip, or one of Maryam's connecting lines (a round picks which of its variants). */
+export type Spoken = string | { line: ArGroup }
+
+/** The parts of a question that a round may draw afresh. */
+export interface Dress {
+  ask?: string[]
+  subject?: ArtRef
+  word?: string
+  options?: Option[]
+  answer?: string
+  reveal?: string[]
+  explain?: Spoken[]
+  note?: string
+}
+
+export interface Question {
+  key: string
+  topic: TopicId
+  kind: QuestionKind
+  format: Format
+  /** The letter the question is about (a mock test asks about each letter once where it can). */
+  letter?: string
+  /** What the question says, in order: Layla's letter, word or sentence, then Maryam's line. */
+  ask: string[]
+  /** The style's set of Maryam's lines; each round says one of them. */
+  lines: LineGroup
+  /** The Arabic line under the instruction: the one Maryam says. */
+  help: string
+  /** The big letter or picture the question is about. */
+  subject?: ArtRef
+  /** letter-sound and missing: the picture's word. */
+  word?: string
+  /** missing: the index of the missing letter in `word`. */
+  gap?: number
+  /** blend: the letters with their short vowels, in order. */
+  syllables?: string[]
+  /** copy: the sentence to write over, with its diacritics as printed in the book. */
+  text?: string
+  options: Option[]
+  answer: string
+  /** Said after a right answer. */
+  reveal: string[]
+  /** Said after a miss, after a kind word: how to find the answer. */
+  explain: Spoken[]
+  /** Shown in the feedback. */
+  note: string
+  difficulty: number
+  skills: string[]
+  /** Draws new pictures or keys for each round; the key and its skill stay the same. */
+  vary?: (random: Random) => Dress
+}
+
+export interface Topic {
+  id: TopicId
+  title: string
+  /** The skill as the school's card words it. */
+  card: string
+  /** Two pictures for the lesson card. */
+  art: [ArtRef, ArtRef]
+}
+
+export interface FormatInfo {
+  /** The book's instruction line. */
+  instruction: string
+  /** The question's number on the mock test. */
+  part: 1 | 2 | 3 | 4 | 5
+}
+
+// ── Letters ───────────────────────────────────────────────────────────────
 export interface Letter {
   char: string
-  /** Name as written on screen, e.g. «الباء». */
+  /** Permanent Latin id, used in question keys and clip names. */
+  id: string
+  /** Name as written on screen, e.g. «الفاء». */
   name: string
   /** Name with diacritics, in the genitive after «حرف». */
   spoken: string
-  /** How to spot it: its dots, on screen and spoken. */
-  dots: string
-  dotsSpoken: string
 }
 
-const NO_DOTS = { dots: 'ليس فيه نقاط', dotsSpoken: 'لَيْسَ فِيهِ نِقَاطٌ' }
-const ONE_ABOVE = { dots: 'فوقه نقطة واحدة', dotsSpoken: 'فَوْقَهُ نُقْطَةٌ وَاحِدَةٌ' }
-const ONE_BELOW = { dots: 'تحته نقطة واحدة', dotsSpoken: 'تَحْتَهُ نُقْطَةٌ وَاحِدَةٌ' }
-const TWO_ABOVE = { dots: 'فوقه نقطتان', dotsSpoken: 'فَوْقَهُ نُقْطَتَانِ' }
-const THREE_ABOVE = { dots: 'فوقه ثلاث نقاط', dotsSpoken: 'فَوْقَهُ ثَلَاثُ نِقَاطٍ' }
-
+/** The ten letters of unit 3, in the book's order. */
 export const LETTERS: Letter[] = [
-  { char: 'أ', name: 'الألف', spoken: 'الأَلِفِ', dots: 'فوقه همزة', dotsSpoken: 'فَوْقَهُ هَمْزَةٌ' },
-  { char: 'ب', name: 'الباء', spoken: 'البَاءِ', ...ONE_BELOW },
-  { char: 'ت', name: 'التاء', spoken: 'التَّاءِ', ...TWO_ABOVE },
-  { char: 'ث', name: 'الثاء', spoken: 'الثَّاءِ', ...THREE_ABOVE },
-  { char: 'ج', name: 'الجيم', spoken: 'الجِيمِ', ...ONE_BELOW },
-  { char: 'ح', name: 'الحاء', spoken: 'الحَاءِ', ...NO_DOTS },
-  { char: 'خ', name: 'الخاء', spoken: 'الخَاءِ', ...ONE_ABOVE },
-  { char: 'د', name: 'الدال', spoken: 'الدَّالِ', ...NO_DOTS },
-  { char: 'ذ', name: 'الذال', spoken: 'الذَّالِ', ...ONE_ABOVE },
-  { char: 'ر', name: 'الراء', spoken: 'الرَّاءِ', ...NO_DOTS },
-  { char: 'ز', name: 'الزاي', spoken: 'الزَّايِ', ...ONE_ABOVE },
-  { char: 'س', name: 'السين', spoken: 'السِّينِ', ...NO_DOTS },
-  { char: 'ش', name: 'الشين', spoken: 'الشِّينِ', ...THREE_ABOVE },
-  { char: 'ص', name: 'الصاد', spoken: 'الصَّادِ', ...NO_DOTS },
-  { char: 'ض', name: 'الضاد', spoken: 'الضَّادِ', ...ONE_ABOVE },
-  { char: 'ط', name: 'الطاء', spoken: 'الطَّاءِ', ...NO_DOTS },
-  { char: 'ظ', name: 'الظاء', spoken: 'الظَّاءِ', ...ONE_ABOVE },
+  { char: 'غ', id: 'ghayn', name: 'الغين', spoken: 'الغَيْنِ' },
+  { char: 'ف', id: 'fa', name: 'الفاء', spoken: 'الفَاءِ' },
+  { char: 'ق', id: 'qaf', name: 'القاف', spoken: 'القَافِ' },
+  { char: 'ك', id: 'kaf', name: 'الكاف', spoken: 'الكَافِ' },
+  { char: 'ل', id: 'lam', name: 'اللام', spoken: 'اللَّامِ' },
+  { char: 'م', id: 'mim', name: 'الميم', spoken: 'المِيمِ' },
+  { char: 'ن', id: 'nun', name: 'النون', spoken: 'النُّونِ' },
+  { char: 'ه', id: 'haa', name: 'الهاء', spoken: 'الهَاءِ' },
+  { char: 'و', id: 'waw', name: 'الواو', spoken: 'الوَاوِ' },
+  { char: 'ي', id: 'ya', name: 'الياء', spoken: 'اليَاءِ' },
 ]
 
 const LETTER = new Map(LETTERS.map((letter) => [letter.char, letter]))
@@ -66,145 +137,154 @@ export function letterOf(char: string): Letter {
   return letter
 }
 
+/** Letters a child mixes up with each one: the same body with other dots, or a close shape. */
+const LOOK_ALIKE: Record<string, string[]> = {
+  غ: ['ف', 'ق'],
+  ف: ['ق', 'غ'],
+  ق: ['ف', 'ك'],
+  ك: ['ق', 'ل'],
+  ل: ['ك', 'ن'],
+  م: ['ه', 'و'],
+  ن: ['ي', 'ل'],
+  ه: ['م', 'و'],
+  و: ['م', 'ف'],
+  ي: ['ن', 'ل'],
+}
+
+// ── Words and pictures from the book ──────────────────────────────────────
 export interface Word {
   /** Permanent Latin id, used in question keys and clip names. */
   id: string
-  /** The book's picture as an emoji; absent for words the book shows without a picture. */
-  art?: string
+  art: string
   /** With diacritics, for the voice (pausal form). */
   spoken: string
 }
 
-// Words from the Ministry book «لغتي العربية» (Grade 1, term 1, 2026/2027), units 1 and 2:
-// each letter lesson's pictures, its «ألاحظ» words and its «أختار - أكمل» shape exercise.
+// The unit's pictures (each lesson's «أتحدث - أحوط», «أظلل - أنطق», «أضع» and «أكمل» rows),
+// drawn as emoji. Words the book shows without a clear picture are left out.
 export const WORDS: Record<string, Word> = {
-  'أسد': { id: 'asad', art: '🦁', spoken: 'أَسَد' },
-  'أرنب': { id: 'arnab', art: '🐇', spoken: 'أَرْنَب' },
-  'أناناس': { id: 'ananas', art: '🍍', spoken: 'أَنَانَاس' },
-  'أذن': { id: 'udhun', art: '👂', spoken: 'أُذُن' },
-  'أنف': { id: 'anf', art: '👃', spoken: 'أَنْف' },
-  'بطة': { id: 'batta', art: '🦆', spoken: 'بَطَّة' },
-  'بطريق': { id: 'bitriq', art: '🐧', spoken: 'بِطْرِيق' },
-  'بركان': { id: 'burkan', art: '🌋', spoken: 'بُرْكَان' },
-  'بيت': { id: 'bayt', art: '🏠', spoken: 'بَيْت' },
-  'بصل': { id: 'basal', art: '🧅', spoken: 'بَصَل' },
-  'بطيخ': { id: 'battikh', art: '🍉', spoken: 'بِطِّيخ' },
-  'تاج': { id: 'taj', art: '👑', spoken: 'تَاج' },
-  'تمساح': { id: 'timsah', art: '🐊', spoken: 'تِمْسَاح' },
+  // غ
+  'غزال': { id: 'ghazal', art: '🦌', spoken: 'غَزَال' },
+  'غيوم': { id: 'ghuyum', art: '☁️', spoken: 'غُيُوم' },
+  'غوريلا': { id: 'ghurila', art: '🦍', spoken: 'غُورِيلَا' },
+  'ببغاء': { id: 'babbagha', art: '🦜', spoken: 'بَبَّغَاء' },
+  'مغناطيس': { id: 'maghnatis', art: '🧲', spoken: 'مِغْنَاطِيس' },
+  'دماغ': { id: 'dimagh', art: '🧠', spoken: 'دِمَاغ' },
+  // ف
+  'فيل': { id: 'fil', art: '🐘', spoken: 'فِيل' },
+  'فأس': { id: 'fas', art: '🪓', spoken: 'فَأْس' },
+  'فطر': { id: 'futr', art: '🍄', spoken: 'فُطْر' },
+  'فأر': { id: 'far', art: '🐭', spoken: 'فَأْر' },
+  'فراشة': { id: 'farasha', art: '🦋', spoken: 'فَرَاشَة' },
+  'فرشاة': { id: 'furshat', art: '🪥', spoken: 'فُرْشَاة' },
+  'فلفل': { id: 'filfil', art: '🫑', spoken: 'فِلْفِل' },
   'تفاح': { id: 'tuffah', art: '🍎', spoken: 'تُفَّاح' },
-  'تذكرة': { id: 'tadhkira', art: '🎟️', spoken: 'تَذْكِرَة' },
-  'ثعلب': { id: 'thalab', art: '🦊', spoken: 'ثَعْلَب' },
-  'ثعبان': { id: 'thuban', art: '🐍', spoken: 'ثُعْبَان' },
-  'ثلج': { id: 'thalj', art: '🧊', spoken: 'ثَلْج' },
-  'ثوب': { id: 'thawb', art: '👗', spoken: 'ثَوْب' },
-  'ثمار': { id: 'thimar', art: '🍒', spoken: 'ثِمَار' },
-  'جمل': { id: 'jamal', art: '🐪', spoken: 'جَمَل' },
-  'جزر': { id: 'jazar', art: '🥕', spoken: 'جَزَر' },
-  'جبن': { id: 'jubn', art: '🧀', spoken: 'جُبْن' },
-  'جرس': { id: 'jaras', art: '🔔', spoken: 'جَرَس' },
-  'جسر': { id: 'jisr', art: '🌉', spoken: 'جِسْر' },
-  'حصان': { id: 'hisan', art: '🐴', spoken: 'حِصَان' },
-  'حليب': { id: 'halib', art: '🥛', spoken: 'حَلِيب' },
-  'حمامة': { id: 'hamama', art: '🕊️', spoken: 'حَمَامَة' },
-  'حبل': { id: 'habl', art: '🪢', spoken: 'حَبْل' },
-  'خيمة': { id: 'khayma', art: '⛺', spoken: 'خَيْمَة' },
-  'خيار': { id: 'khiyar', art: '🥒', spoken: 'خِيَار' },
-  'خبز': { id: 'khubz', art: '🍞', spoken: 'خُبْز' },
+  'رغيف': { id: 'raghif', art: '🍞', spoken: 'رَغِيف' },
+  'صوف': { id: 'suf', art: '🧶', spoken: 'صُوف' },
   'خروف': { id: 'kharuf', art: '🐑', spoken: 'خَرُوف' },
-  'خوخ': { id: 'khawkh', art: '🍑', spoken: 'خَوْخ' },
-  'دب': { id: 'dubb', art: '🐻', spoken: 'دُبّ' },
-  'دراجة': { id: 'darraja', art: '🚲', spoken: 'دَرَّاجَة' },
-  'دجاجة': { id: 'dajaja', art: '🐔', spoken: 'دَجَاجَة' },
-  'درع': { id: 'dir', art: '🛡️', spoken: 'دِرْع' },
-  'ذرة': { id: 'dhura', art: '🌽', spoken: 'ذُرَة' },
-  'ذئب': { id: 'dhib', art: '🐺', spoken: 'ذِئْب' },
-  'ذبابة': { id: 'dhubaba', art: '🪰', spoken: 'ذُبَابَة' },
-  'ذراع': { id: 'dhira', art: '💪', spoken: 'ذِرَاع' },
-  'رجل': { id: 'rijl', art: '🦶', spoken: 'رِجْل' },
-  'ريحان': { id: 'rayhan', art: '🌿', spoken: 'رَيْحَان' },
-  'زرافة': { id: 'zarafa', art: '🦒', spoken: 'زَرَافَة' },
-  'زهرة': { id: 'zahra', art: '🌸', spoken: 'زَهْرَة' },
-  'زيتون': { id: 'zaytun', art: '🫒', spoken: 'زَيْتُون' },
-  'زبدة': { id: 'zubda', art: '🧈', spoken: 'زُبْدَة' },
-  'سمكة': { id: 'samaka', art: '🐠', spoken: 'سَمَكَة' },
-  'سنجاب': { id: 'sinjab', art: '🐿️', spoken: 'سِنْجَاب' },
-  'سلحفاة': { id: 'sulahfa', art: '🐢', spoken: 'سُلَحْفَاة' },
-  'سيارة': { id: 'sayyara', art: '🚗', spoken: 'سَيَّارَة' },
-  'سفينة': { id: 'safina', art: '⛵', spoken: 'سَفِينَة' },
-  'شمس': { id: 'shams', art: '☀️', spoken: 'شَمْس' },
-  'شجرة': { id: 'shajara', art: '🌳', spoken: 'شَجَرَة' },
-  'شموع': { id: 'shumu', art: '🕯️', spoken: 'شُمُوع' },
-  'شوكة': { id: 'shawka', art: '🍴', spoken: 'شَوْكَة' },
-  'صقر': { id: 'saqr', art: '🦅', spoken: 'صَقْر' },
-  'صندوق': { id: 'sunduq', art: '📦', spoken: 'صُنْدُوق' },
-  'صنارة': { id: 'sinnara', art: '🎣', spoken: 'صِنَّارَة' },
   'ضفدع': { id: 'difda', art: '🐸', spoken: 'ضِفْدَع' },
-  'ضماد': { id: 'dimad', art: '🩹', spoken: 'ضِمَاد' },
-  'ضوء': { id: 'daw', art: '💡', spoken: 'ضَوْء' },
-  'طائرة': { id: 'taira', art: '✈️', spoken: 'طَائِرَة' },
-  'طبل': { id: 'tabl', art: '🥁', spoken: 'طَبْل' },
-  'طيار': { id: 'tayyar', art: '👨‍✈️', spoken: 'طَيَّار' },
-  'طفل': { id: 'tifl', art: '👶', spoken: 'طِفْل' },
-  'ظرف': { id: 'zarf', art: '✉️', spoken: 'ظَرْف' },
-  'ظبي': { id: 'zabi', art: '🦌', spoken: 'ظَبْي' },
-  'ظفر': { id: 'zufr', art: '💅', spoken: 'ظُفْر' },
-  'كأس': { id: 'kas', art: '🏆', spoken: 'كَأْس' },
-  'جبل': { id: 'jabal', art: '⛰️', spoken: 'جَبَل' },
-  'حوت': { id: 'hut', art: '🐳', spoken: 'حُوت' },
-  'درج': { id: 'daraj', art: '🪜', spoken: 'دَرَج' },
-  'سحب': { id: 'suhub', art: '☁️', spoken: 'سُحُب' },
-  'صاروخ': { id: 'sarukh', art: '🚀', spoken: 'صَارُوخ' },
+  // ق
+  'قمح': { id: 'qamh', art: '🌾', spoken: 'قَمْح' },
+  'قرع': { id: 'qar', art: '🎃', spoken: 'قَرْع' },
+  'قفاز': { id: 'quffaz', art: '🧤', spoken: 'قُفَّاز' },
+  'قنفذ': { id: 'qunfudh', art: '🦔', spoken: 'قُنْفُذ' },
+  'قلم': { id: 'qalam', art: '🖊️', spoken: 'قَلَم' },
   'قرد': { id: 'qird', art: '🐒', spoken: 'قِرْد' },
-  'تلميذ': { id: 'tilmidh', art: '🧑‍🎓', spoken: 'تِلْمِيذ' },
-  'ريش': { id: 'rish', art: '🪶', spoken: 'رِيش' },
-  'بيض': { id: 'bayd', art: '🥚', spoken: 'بَيْض' },
+  'قرش': { id: 'qirsh', art: '🦈', spoken: 'قِرْش' },
+  'قطار': { id: 'qitar', art: '🚆', spoken: 'قِطَار' },
+  'نقود': { id: 'nuqud', art: '💵', spoken: 'نُقُود' },
+  'ورق': { id: 'waraq', art: '📄', spoken: 'وَرَق' },
+  'صندوق': { id: 'sunduq', art: '📦', spoken: 'صُنْدُوق' },
+  // ك
+  'كتاب': { id: 'kitab', art: '📖', spoken: 'كِتَاب' },
+  'كرز': { id: 'karaz', art: '🍒', spoken: 'كَرَز' },
+  'كرة': { id: 'kura', art: '⚽', spoken: 'كُرَة' },
+  'كلب': { id: 'kalb', art: '🐕', spoken: 'كَلْب' },
+  'كرسي': { id: 'kursi', art: '🪑', spoken: 'كُرْسِيّ' },
+  'كأس': { id: 'kas', art: '🏆', spoken: 'كَأْس' },
+  'كوكب': { id: 'kawkab', art: '🪐', spoken: 'كَوْكَب' },
+  'سمكة': { id: 'samaka', art: '🐟', spoken: 'سَمَكَة' },
+  'ديك': { id: 'dik', art: '🐓', spoken: 'دِيك' },
+  'نيزك': { id: 'nayzak', art: '☄️', spoken: 'نَيْزَك' },
+  'شباك': { id: 'shubbak', art: '🪟', spoken: 'شُبَّاك' },
+  'مكنسة': { id: 'miknasa', art: '🧹', spoken: 'مِكْنَسَة' },
+  // ل
+  'ليمون': { id: 'laymun', art: '🍋', spoken: 'لَيْمُون' },
+  'لحم': { id: 'lahm', art: '🥩', spoken: 'لَحْم' },
+  'لوحة': { id: 'lawha', art: '🖼️', spoken: 'لَوْحَة' },
+  'حليب': { id: 'halib', art: '🥛', spoken: 'حَلِيب' },
+  'عسل': { id: 'asal', art: '🍯', spoken: 'عَسَل' },
+  'برتقال': { id: 'burtuqal', art: '🍊', spoken: 'بُرْتُقَال' },
+  'طفل': { id: 'tifl', art: '👶', spoken: 'طِفْل' },
+  'جمل': { id: 'jamal', art: '🐪', spoken: 'جَمَل' },
+  'بصل': { id: 'basal', art: '🧅', spoken: 'بَصَل' },
+  // م
+  'موز': { id: 'mawz', art: '🍌', spoken: 'مَوْز' },
+  'مفتاح': { id: 'miftah', art: '🔑', spoken: 'مِفْتَاح' },
+  'مقص': { id: 'miqass', art: '✂️', spoken: 'مِقَصّ' },
+  'مسجد': { id: 'masjid', art: '🕌', spoken: 'مَسْجِد' },
+  'مهرج': { id: 'muharrij', art: '🤡', spoken: 'مُهَرِّج' },
+  'ملعب': { id: 'malab', art: '🏟️', spoken: 'مَلْعَب' },
+  'مثلث': { id: 'muthallath', art: '🔺', spoken: 'مُثَلَّث' },
+  'شمس': { id: 'shams', art: '☀️', spoken: 'شَمْس' },
+  'سلم': { id: 'sullam', art: '🪜', spoken: 'سُلَّم' },
+  'شمعة': { id: 'shama', art: '🕯️', spoken: 'شَمْعَة' },
+  // ن
+  'نملة': { id: 'namla', art: '🐜', spoken: 'نَمْلَة' },
+  'نحلة': { id: 'nahla', art: '🐝', spoken: 'نَحْلَة' },
+  'نخلة': { id: 'nakhla', art: '🌴', spoken: 'نَخْلَة' },
   'نظارة': { id: 'nazzara', art: '👓', spoken: 'نَظَّارَة' },
-  'نبأ': { id: 'naba', spoken: 'نَبَأ' },
-  'بحر': { id: 'bahr', art: '🌊', spoken: 'بَحْر' },
-  'عشب': { id: 'ushb', art: '🌱', spoken: 'عُشْب' },
-  'ضبع': { id: 'dabu', spoken: 'ضَبُع' },
-  'هتف': { id: 'hatafa', spoken: 'هَتَفَ' },
-  'زيت': { id: 'zayt', spoken: 'زَيْت' },
-  'عنكبوت': { id: 'ankabut', art: '🕷️', spoken: 'عَنْكَبُوت' },
-  'مثل': { id: 'mithl', spoken: 'مِثْل' },
-  'ثقل': { id: 'thiql', spoken: 'ثِقْل' },
-  'شجر': { id: 'shajar', spoken: 'شَجَر' },
-  'موج': { id: 'mawj', spoken: 'مَوْج' },
-  'ضحك': { id: 'dahika', spoken: 'ضَحِكَ' },
-  'نجح': { id: 'najaha', spoken: 'نَجَحَ' },
-  'صخرة': { id: 'sakhra', art: '🪨', spoken: 'صَخْرَة' },
-  'بدر': { id: 'badr', art: '🌕', spoken: 'بَدْر' },
+  'نسر': { id: 'nasr', art: '🦅', spoken: 'نَسْر' },
+  'منع': { id: 'man', art: '🚫', spoken: 'مَنْع' },
+  'وزن': { id: 'wazn', art: '⚖️', spoken: 'وَزْن' },
+  'عين': { id: 'ayn', art: '👁️', spoken: 'عَيْن' },
+  'أنف': { id: 'anf', art: '👃', spoken: 'أَنْف' },
+  'سنجاب': { id: 'sinjab', art: '🐿️', spoken: 'سِنْجَاب' },
+  'حصان': { id: 'hisan', art: '🐴', spoken: 'حِصَان' },
+  'عنب': { id: 'inab', art: '🍇', spoken: 'عِنَب' },
+  // ه
+  'هدية': { id: 'hadiyya', art: '🎁', spoken: 'هَدِيَّة' },
+  'هلال': { id: 'hilal', art: '🌙', spoken: 'هِلَال' },
+  'هدف': { id: 'hadaf', art: '🥅', spoken: 'هَدَف' },
+  'هدوء': { id: 'hudu', art: '🤫', spoken: 'هُدُوء' },
+  'وجه': { id: 'wajh', art: '😊', spoken: 'وَجْه' },
+  'مياه': { id: 'miyah', art: '💧', spoken: 'مِيَاه' },
+  'نهر': { id: 'nahr', art: '🏞️', spoken: 'نَهْر' },
+  'فهد': { id: 'fahd', art: '🐆', spoken: 'فَهْد' },
+  // و
   'ورد': { id: 'ward', art: '🌹', spoken: 'وَرْد' },
-  'نفذ': { id: 'nafadha', spoken: 'نَفَذَ' },
-  'شرح': { id: 'sharh', spoken: 'شَرْح' },
-  'صدر': { id: 'sadr', spoken: 'صَدْر' },
-  'قفز': { id: 'qafaza', spoken: 'قَفَزَ' },
-  'جلس': { id: 'jalasa', spoken: 'جَلَسَ' },
-  'سكب': { id: 'sakaba', spoken: 'سَكَبَ' },
-  'مشط': { id: 'musht', spoken: 'مُشْط' },
-  'جيش': { id: 'jaysh', spoken: 'جَيْش' },
-  'قصر': { id: 'qasr', art: '🏰', spoken: 'قَصْر' },
-  'قميص': { id: 'qamis', art: '👕', spoken: 'قَمِيص' },
-  'فضة': { id: 'fidda', spoken: 'فِضَّة' },
-  'نبض': { id: 'nabd', spoken: 'نَبْض' },
-  'هطل': { id: 'hatala', spoken: 'هَطَلَ' },
-  'طرق': { id: 'turuq', spoken: 'طُرُق' },
-  'كظم': { id: 'kazama', spoken: 'كَظَمَ' },
-  'وعظ': { id: 'waz', spoken: 'وَعْظ' },
+  'ولد': { id: 'walad', art: '👦', spoken: 'وَلَد' },
+  'وشاح': { id: 'wishah', art: '🧣', spoken: 'وِشَاح' },
+  'وعاء': { id: 'wia', art: '🍲', spoken: 'وِعَاء' },
+  'دلو': { id: 'dalw', art: '🪣', spoken: 'دَلْو' },
+  'جرو': { id: 'jarw', art: '🐶', spoken: 'جَرْو' },
+  'حوت': { id: 'hut', art: '🐳', spoken: 'حُوت' },
+  'صاروخ': { id: 'sarukh', art: '🚀', spoken: 'صَارُوخ' },
+  'زيتون': { id: 'zaytun', art: '🫒', spoken: 'زَيْتُون' },
+  // ي
+  'يد': { id: 'yad', art: '✋', spoken: 'يَد' },
+  'يخت': { id: 'yakht', art: '🛥️', spoken: 'يَخْت' },
+  'يمامة': { id: 'yamama', art: '🕊️', spoken: 'يَمَامَة' },
+  'بيت': { id: 'bayt', art: '🏠', spoken: 'بَيْت' },
+  'بيض': { id: 'bayd', art: '🥚', spoken: 'بَيْض' },
+  'سيارة': { id: 'sayyara', art: '🚗', spoken: 'سَيَّارَة' },
 }
 
-/** The book's picture words for each test letter. */
-export const WORDS_BY_LETTER: Record<string, string[]> = {
-  'أ': ['أسد', 'أرنب', 'أناناس', 'أذن', 'أنف'], 'ب': ['بطة', 'بطريق', 'بركان', 'بيت', 'بصل', 'بطيخ'],
-  'ت': ['تاج', 'تمساح', 'تفاح', 'تذكرة'], 'ث': ['ثعلب', 'ثعبان', 'ثلج', 'ثوب'], 'ج': ['جمل', 'جزر', 'جبن', 'جرس', 'جسر'],
-  'ح': ['حصان', 'حليب', 'حمامة', 'حبل'], 'خ': ['خيمة', 'خيار', 'خبز', 'خروف', 'خوخ'], 'د': ['دب', 'دراجة', 'دجاجة', 'درع'],
-  'ذ': ['ذرة', 'ذئب', 'ذبابة', 'ذراع'], 'ر': ['رجل', 'ريحان'], 'ز': ['زرافة', 'زهرة', 'زيتون', 'زبدة'],
-  'س': ['سمكة', 'سنجاب', 'سلحفاة', 'سيارة', 'سفينة'], 'ش': ['شمس', 'شجرة', 'شموع', 'شوكة'], 'ص': ['صقر', 'صندوق', 'صنارة'],
-  'ض': ['ضفدع', 'ضماد', 'ضوء'], 'ط': ['طائرة', 'طبل', 'طيار', 'طفل'], 'ظ': ['ظرف', 'ظبي', 'ظفر'],
+/** Words for each letter that start with it and have a clear picture. */
+export const PICTURE_WORDS: Record<string, string[]> = {
+  غ: ['غزال', 'غيوم', 'غوريلا'],
+  ف: ['فيل', 'فأس', 'فطر', 'فأر', 'فراشة', 'فرشاة', 'فلفل'],
+  ق: ['قمح', 'قرع', 'قفاز', 'قنفذ', 'قلم', 'قرد', 'قرش', 'قطار'],
+  ك: ['كتاب', 'كرز', 'كرة', 'كلب', 'كرسي', 'كأس', 'كوكب'],
+  ل: ['ليمون', 'لحم', 'لوحة'],
+  م: ['موز', 'مفتاح', 'مقص', 'مسجد', 'مهرج', 'ملعب', 'مثلث'],
+  ن: ['نملة', 'نحلة', 'نخلة', 'نظارة', 'نسر', 'نقود'],
+  ه: ['هدية', 'هلال', 'هدف', 'هدوء'],
+  و: ['ورد', 'ولد', 'وجه', 'ورق', 'وشاح', 'وعاء'],
+  ي: ['يد', 'يخت', 'يمامة'],
 }
 
 // ── Arabic letter shapes ──────────────────────────────────────────────────
-const TATWEEL = 'ـ'
 const ZWJ = '‍'
 /** Letters that never join the letter after them. */
 const NON_JOINING = new Set(['ا', 'أ', 'إ', 'آ', 'د', 'ذ', 'ر', 'ز', 'و', 'ؤ', 'ة', 'ء', 'ى'])
@@ -222,14 +302,6 @@ export function positionIn(letters: string[], index: number): Position {
   return 'isolated'
 }
 
-/** A letter's shape written on its own, with tatweel showing the joins. */
-export function formOf(char: string, position: Position): string {
-  if (position === 'initial') return char + TATWEEL
-  if (position === 'medial') return TATWEEL + char + TATWEEL
-  if (position === 'final') return TATWEEL + char
-  return char
-}
-
 /** Each letter of a word as shown inside the word: zero-width joiners keep the joined shape per letter. */
 export function joinedPieces(letters: string[]): string[] {
   return letters.map((char, index) => {
@@ -243,119 +315,255 @@ export function joinedPieces(letters: string[]): string[] {
 /** Unicode letters of a word (Arabic letters are single code points here). */
 export const lettersOf = (word: string) => [...word]
 
-// ── Clip ids ──────────────────────────────────────────────────────────────
-// fs/… is Modern Standard Arabic (Layla, with diacritics); ar/… is Kuwaiti (Maryam).
-// Permanent Latin ids: question keys and clip names never depend on list order.
-const LETTER_IDS = ['alif', 'ba', 'ta', 'tha', 'jim', 'ha', 'kha', 'dal', 'dhal', 'ra', 'zay', 'sin', 'shin', 'sad', 'dad', 'tta', 'zza']
-const slug = (char: string) => LETTER_IDS[LETTERS.findIndex((letter) => letter.char === char)]!
-const wordSlug = (word: string) => WORDS[word]!.id
-
-export const clip = {
-  name: (char: string) => `fs/name/${slug(char)}`,
-  where: (char: string) => `fs/where/${slug(char)}`,
-  starts: (char: string) => `fs/starts/${slug(char)}`,
-  dots: (char: string) => `fs/dots/${slug(char)}`,
-  word: (word: string) => `fs/word/${wordSlug(word)}`,
-  blend: (id: string) => `fs/blend/${id}`,
-  ask: (id: AskClip) => `ar/q/${id}`,
-  topic: (id: TopicId) => `ar/t/${id}`,
-  ui: (id: UiClip) => `ar/ui/${id}`,
+// ── Building words and the book's sentences ───────────────────────────────
+export interface Blend {
+  id: string
+  /** With its short vowels. */
+  word: string
+  syllables: string[]
 }
 
-// ── Explanations ──────────────────────────────────────────────────────────
-/** One way to explain an answer: shown on screen and spoken as a short run of clips. */
-export interface Explanation {
-  text: string
-  clips: string[]
-}
-
-function startsWith(word: string): Explanation[] {
-  const letter = letterOf(lettersOf(word)[0]!)
-  return [
-    { text: `${word} تبدأ بحرف ${letter.name}`, clips: [clip.word(word), clip.starts(letter.char)] },
-    { text: `${word} تبدأ بحرف ${letter.name}، و${letter.dots}`, clips: [clip.word(word), clip.starts(letter.char), clip.dots(letter.char)] },
-    { text: `حرف ${letter.name}: ${word}`, clips: [clip.name(letter.char), clip.word(word)] },
-  ]
-}
-
-const dotsOf = (char: string): Explanation => {
-  const letter = letterOf(char)
-  return { text: `حرف ${letter.name} ${letter.dots}`, clips: [clip.dots(char)] }
-}
-
-const POSITION_TEXT: Record<Position, { text: string; ui: UiClip }> = {
-  initial: { text: 'في أول الكلمة يتصل بما بعده', ui: 'pos-initial' },
-  medial: { text: 'في وسط الكلمة يتصل من الجهتين', ui: 'pos-medial' },
-  final: { text: 'في آخر الكلمة يتصل بما قبله', ui: 'pos-final' },
-  isolated: { text: 'هنا لا يتصل بغيره', ui: 'pos-isolated' },
-}
-
-// ── Topics ────────────────────────────────────────────────────────────────
-export interface Topic {
-  id: TopicId
-  title: string
-  say: string
-  art: ArtRef[]
-}
-
-export const TOPICS: Topic[] = [
-  { id: 'picture', title: 'الحرف والصورة', say: 'كل صورة تبدأ بحرف… نسمع اسم الصورة، ونعرف أول حرف فيها.', art: ['🦁', 'txt:أ'] },
-  { id: 'find', title: 'الحرف في الكلمة', say: 'الحروف مخبية داخل الكلمات… نشوف الكلمة، ونلقى الحرف المطلوب.', art: ['🔍', 'txt:ب'] },
-  { id: 'form', title: 'شكل الحرف', say: 'الحرف يتغير شكله… في أول الكلمة، وفي وسطها، وفي آخرها. نختار الشكل الصح.', art: ['🧩', 'txt:ـبـ'] },
-  { id: 'blend', title: 'تركيب الكلمة', say: 'نركب الحروف مع بعض… ونقرا الكلمة كاملة.', art: ['txt:دَ', 'txt:رَ'] },
-  { id: 'copy', title: 'نسخ الحرفين', say: 'نركز زين في النقاط… ونختار الحرفين نفسهم بالضبط.', art: ['✏️', 'pair:ج خ'] },
+// The unit's «أركب - أقرأ - أكتب» rows and its «أمرح» games, in the book's order, and the
+// review's «وَ + هـ + بَ» (page 196).
+export const BLENDS: Blend[] = [
+  { id: 'gharasa', word: 'غَرَسَ', syllables: ['غَ', 'رَ', 'سَ'] },
+  { id: 'raghiba', word: 'رَغِبَ', syllables: ['رَ', 'غِ', 'بَ'] },
+  { id: 'saghura', word: 'صَغُرَ', syllables: ['صَ', 'غُ', 'رَ'] },
+  { id: 'daghata', word: 'ضَغَطَ', syllables: ['ضَ', 'غَ', 'طَ'] },
+  { id: 'fataha', word: 'فَتَحَ', syllables: ['فَ', 'تَ', 'حَ'] },
+  { id: 'fariha', word: 'فَرِحَ', syllables: ['فَ', 'رِ', 'حَ'] },
+  { id: 'jarafa', word: 'جَرَفَ', syllables: ['جَ', 'رَ', 'فَ'] },
+  { id: 'gharafa', word: 'غَرَفَ', syllables: ['غَ', 'رَ', 'فَ'] },
+  { id: 'qaraa', word: 'قَرَأَ', syllables: ['قَ', 'رَ', 'أَ'] },
+  { id: 'thaqifa', word: 'ثَقِفَ', syllables: ['ثَ', 'قِ', 'فَ'] },
+  { id: 'qaruba', word: 'قَرُبَ', syllables: ['قَ', 'رُ', 'بَ'] },
+  { id: 'qataa', word: 'قَطَعَ', syllables: ['قَ', 'طَ', 'عَ'] },
+  { id: 'kataba', word: 'كَتَبَ', syllables: ['كَ', 'تَ', 'بَ'] },
+  { id: 'dahika', word: 'ضَحِكَ', syllables: ['ضَ', 'حِ', 'كَ'] },
+  { id: 'kabura', word: 'كَبُرَ', syllables: ['كَ', 'بُ', 'رَ'] },
+  { id: 'rakada', word: 'رَكَضَ', syllables: ['رَ', 'كَ', 'ضَ'] },
+  { id: 'saala', word: 'سَأَلَ', syllables: ['سَ', 'أَ', 'لَ'] },
+  { id: 'labisa', word: 'لَبِسَ', syllables: ['لَ', 'بِ', 'سَ'] },
+  { id: 'thaqula', word: 'ثَقُلَ', syllables: ['ثَ', 'قُ', 'لَ'] },
+  { id: 'akala', word: 'أَكَلَ', syllables: ['أَ', 'كَ', 'لَ'] },
+  { id: 'masaha', word: 'مَسَحَ', syllables: ['مَ', 'سَ', 'حَ'] },
+  { id: 'hamida', word: 'حَمِدَ', syllables: ['حَ', 'مِ', 'دَ'] },
+  { id: 'ghamura', word: 'غَمُرَ', syllables: ['غَ', 'مُ', 'رَ'] },
+  { id: 'masaka', word: 'مَسَكَ', syllables: ['مَ', 'سَ', 'كَ'] },
+  { id: 'najaha', word: 'نَجَحَ', syllables: ['نَ', 'جَ', 'حَ'] },
+  { id: 'amina', word: 'أَمِنَ', syllables: ['أَ', 'مِ', 'نَ'] },
+  { id: 'nabata', word: 'نَبَتَ', syllables: ['نَ', 'بَ', 'تَ'] },
+  { id: 'hatala', word: 'هَطَلَ', syllables: ['هَ', 'طَ', 'لَ'] },
+  { id: 'sahira', word: 'سَهِرَ', syllables: ['سَ', 'هِ', 'رَ'] },
+  { id: 'nahada', word: 'نَهَضَ', syllables: ['نَ', 'هَ', 'ضَ'] },
+  { id: 'waada', word: 'وَعَدَ', syllables: ['وَ', 'عَ', 'دَ'] },
+  { id: 'wasia', word: 'وَسِعَ', syllables: ['وَ', 'سِ', 'عَ'] },
+  { id: 'wajada', word: 'وَجَدَ', syllables: ['وَ', 'جَ', 'دَ'] },
+  { id: 'yaqifu', word: 'يَقِفُ', syllables: ['يَ', 'قِ', 'فُ'] },
+  { id: 'nasiya', word: 'نَسِيَ', syllables: ['نَ', 'سِ', 'يَ'] },
+  { id: 'yazinu', word: 'يَزِنُ', syllables: ['يَ', 'زِ', 'نُ'] },
+  { id: 'wahaba', word: 'وَهَبَ', syllables: ['وَ', 'هَ', 'بَ'] },
 ]
 
-// ── Questions ─────────────────────────────────────────────────────────────
-export interface Option {
+export interface Sentence {
   id: string
-  art: ArtRef
-  label: string
-  /** Read while the tile lights up; absent when hearing it would give the answer away. */
-  clip?: string
+  /** With its diacritics. */
+  text: string
+  /** The page it is printed on, or none for practice sentences in the book's pattern. */
+  page?: number
 }
 
-export interface Pair {
-  id: string
-  /** The letter, chosen first. */
-  first: ArtRef
-  /** The picture that answers it. */
-  second: ArtRef
-  label: string
+export const SENTENCES: Sentence[] = [
+  { id: 'qaraa-hamad', text: 'قَرَأَ حَمَدٌ.', page: 173 },
+  { id: 'qaraa-hamad-anas', text: 'قَرَأَ حَمَدٌ مَعَ أَنَسٍ.', page: 178 },
+  { id: 'dhahaba-hamad', text: 'ذَهَبَ حَمَدٌ.', page: 183 },
+  { id: 'dhahaba-hamad-amal', text: 'ذَهَبَ حَمَدٌ وَأَمَلُ.', page: 188 },
+  { id: 'yaqifu-hamad-umar', text: 'يَقِفُ حَمَدٌ مَعَ عُمَرَ.', page: 193 },
+  // The same pattern with the unit's words (page 197).
+  { id: 'saala-anas', text: 'سَأَلَ أَنَسٌ.' },
+  { id: 'fariha-umar', text: 'فَرِحَ عُمَرُ.' },
+  { id: 'laiba-hamad-anas', text: 'لَعِبَ حَمَدٌ مَعَ أَنَسٍ.' },
+]
+
+// ── Clip ids ──────────────────────────────────────────────────────────────
+// fs/… is Modern Standard Arabic (Layla, with diacritics); ar/… is Kuwaiti (Maryam).
+const letterId = (char: string) => letterOf(char).id
+const wordId = (word: string) => {
+  const entry = WORDS[word]
+  if (!entry) throw new Error(`${word} is not in WORDS`)
+  return entry.id
+}
+
+export const clip = {
+  name: (char: string) => `fs/name/${letterId(char)}`,
+  starts: (char: string) => `fs/starts/${letterId(char)}`,
+  word: (word: string) => `fs/word/${wordId(word)}`,
+  blend: (id: string) => `fs/blend/${id}`,
+  sentence: (id: string) => `fs/sentence/${id}`,
+  /** Maryam's line `n` (from 0) for a question style. */
+  line: (group: LineGroup, n = 0) => `ar/q/${group}-${n + 1}`,
+  ar: (group: ArGroup, n = 0) => `ar/ui/${group}-${n + 1}`,
+}
+
+// ── Lessons and the book's instruction lines ──────────────────────────────
+export const TOPICS: Topic[] = [
+  { id: 'picture', title: 'الصورة المناسبة للحرف', card: 'تحديد الصورة المناسبة للحرف المحدد', art: ['txt:ف', '🐘'] },
+  { id: 'sound', title: 'صوت الحرف والصورة', card: 'كتابة صوت الحرف الدال على الصورة', art: ['🦌', 'txt:غ'] },
+  { id: 'missing', title: 'الحرف الناقص', card: 'إكمال الكلمة بالحرف الناقص', art: ['🍎', 'txt:؟'] },
+  { id: 'blend', title: 'تركيب الكلمة', card: 'تركيب الحروف لتكوين كلمة', art: ['🧩', 'txt:+'] },
+  { id: 'handwriting', title: 'نسخ الجملة', card: 'نسخ جملة بخط جميل', art: ['✏️', 'txt:م'] },
+]
+
+export const FORMATS: Record<Format, FormatInfo> = {
+  'pic-for-letter': { instruction: 'أختار الصورة المناسبة للحرف', part: 1 },
+  'letter-sound': { instruction: 'أشاهد – أكتب صوت الحرف المناسب للصورة', part: 2 },
+  missing: { instruction: 'أكمل الكلمة بالحرف الناقص', part: 3 },
+  blend: { instruction: 'أركب الحروف لتكوين كلمة', part: 4 },
+  copy: { instruction: 'أنسخ الجملة بخط جميل', part: 5 },
+}
+
+/** The mock test's question headings, as on the school's test paper. */
+export const PART_TITLES = ['', 'السؤال الأول', 'السؤال الثاني', 'السؤال الثالث', 'السؤال الرابع', 'السؤال الخامس'] as const
+
+// ── What Maryam says for each question style ──────────────────────────────
+// Several lines per style, in different shapes (a question, a tip, a picture to imagine),
+// written for this quiz rather than taken from the family's other quizzes. The letter, word or
+// sentence (Layla) is said just before the line.
+export const ASK_LINES = {
+  // After the letter's name.
+  'pic-for-letter': [
+    'وين الصورة اللي تبدأ بهالحرف؟',
+    'نسمع اسم كل صورة، ونختار اللي أولها هالحرف.',
+    'أي صورة اسمها يبدأ بهالحرف؟',
+    'ننتبه لأول صوت في اسم الصورة.',
+  ],
+  // After the picture's word.
+  'letter-sound': [
+    'نكتب حرف أول صوت نسمعه.',
+    'نقول اسم الصورة على مهل، ونكتب أول حرف فيها.',
+    'بأي حرف تبدأ هالكلمة؟ نكتبه في المربع.',
+    'نسمع الكلمة زين، ونلقى حرفها الأول.',
+  ],
+  // After the word.
+  missing: [
+    'الكلمة ناقصها حرف، شنو هو؟',
+    'نقرا الكلمة مع الصورة، ونكمل الحرف الناقص.',
+    'حرف طاح من الكلمة، نرجعه مكانه.',
+    'نسمع الكلمة على مهل، وين الحرف الناقص؟',
+  ],
+  blend: [
+    'نركب الحروف مع بعض، شنو الكلمة؟',
+    'نقرا الحروف من اليمين، حرف حرف، ونلقى الكلمة.',
+    'ثلاثة حروف تصير كلمة وحدة، أي كلمة؟',
+    'نجمع الحروف بالترتيب، ونختار الكلمة اللي تطلع.',
+  ],
+  // After the sentence.
+  copy: [
+    'ننسخ الجملة بخط حلو، نمشي بإصبعنا فوق الرمادي.',
+    'نكتب الجملة على مهل، كلمة كلمة، من اليمين.',
+    'خطنا حلو ومرتب، نكتب فوق الكتابة الرمادية.',
+  ],
+} as const satisfies Record<Format, readonly string[]>
+
+export type LineGroup = keyof typeof ASK_LINES
+
+/** Maryam's lines for the moments around the questions. */
+export const AR_LINES = {
+  welcome: ['هلا والله! جاهزين نتدرب على العربي؟ نختار درس.', 'يا هلا! حروف الوحدة الثالثة تنطرنا، من وين نبدأ؟'],
+  'test-intro': ['اختبار تجريبي مثل ورقة المدرسة، يلا نبدأ من السؤال الأول!', 'جاهزين؟ نفس أسئلة الاختبار وبنفس الترتيب، يلا!'],
+  // The mock test, as each of its questions begins.
+  'part-1': ['السؤال الأول'],
+  'part-2': ['السؤال الثاني'],
+  'part-3': ['السؤال الثالث'],
+  'part-4': ['السؤال الرابع'],
+  'part-5': ['السؤال الخامس'],
+  /** Copying: the first check did not pass. */
+  'trace-again': ['شوي بعد! نكتب فوق الخط الرمادي بالضبط.', 'باقي كلمات ما كتبناها، نكملها فوق الرمادي.'],
+  /** A copy that missed: before the sentence is said. */
+  review: ['نطالعها مع بعض.', 'نسمع الجملة مرة ثانية.'],
+  /** A wrong choice: a kind word, then the explanation. */
+  retry: ['قريبة حيل!', 'ما عليه، نتعلمها الحين.', 'حلو إننا حاولنا!', 'هذي تبي تركيز شوي.', 'عادي، الغلط يعلمنا.', 'المرة الياية نضبطها!', 'نشوفها سوا.'],
+  // The explanation after a miss: each line leads into the letter or word that follows it.
+  'x-missing': ['الحرف الناقص هو', 'الكلمة ناقصها'],
+  'x-blend': ['الحروف مع بعض تصير', 'نقراها مع بعض'],
+  // Cheers: for any question, and for one kind of question.
+  cheer: [
+    'الحروف صارت صحابنا!',
+    'قراية ولا أحلى!',
+    'صح، ومن أول مرة!',
+    'يا سلام على هالجواب!',
+    'تبارك الله!',
+    'حروفنا قوية!',
+    'العربي حلو، والجواب أحلى!',
+    'نجمة جديدة لنا!',
+    'زين زين!',
+    'الله الله، صح!',
+    'عين ما تغلط!',
+    'فهمناها زين!',
+    'جذي الشطارة!',
+    'هذا الكلام!',
+    'وصلنا للجواب الصح!',
+    'صح، وبسرعة!',
+  ],
+  'cheer-picture': ['الصورة والحرف أصحاب!', 'عرفناها من أول صوت!', 'نظرة وحدة وعرفناها!'],
+  'cheer-sound': ['الأذن ذكية!', 'سمعنا الصوت صح!', 'أول صوت، وأول حرف!'],
+  'cheer-missing': ['الحرف رجع لبيته!', 'كملنا الكلمة!', 'ولا حرف ناقص!'],
+  'cheer-blend': ['ركبناها صح!', 'الحروف صارت كلمة!', 'تركيب مضبوط!'],
+  'cheer-trace': ['خط يجنن!', 'كتبناها حلوة ومرتبة!', 'الجملة صارت أحلى بخطنا!'],
+  /** Three, then five right answers running. */
+  'streak-3': ['ثلاثة ورا بعض، كلها صح!', 'ثلاثة صح، نكمل!'],
+  'streak-5': ['خمسة صح ورا بعض، عاش!', 'خمسة كلها صح، ما شاء الله!'],
+  'done-great': ['النجوم كلها لنا، والحروف بعد!', 'جولة تفرح الأهل!'],
+  'done-good': ['زين! نعيدها ونصير أشطر.', 'كل جولة نتعلم أكثر، نعيدها؟'],
+} as const satisfies Record<string, readonly string[]>
+
+export type ArGroup = keyof typeof AR_LINES
+
+export interface Line {
+  text: string
   clip: string
 }
 
-export interface Question {
-  key: string
-  topic: TopicId
-  kind: QuestionKind
-  prompt: string
-  ask: string[]
-  subject?: ArtRef
-  /** A word with one letter missing (shape questions). */
-  gap?: { letters: string[]; index: number }
-  /** A word whose letters can be tapped (finding a letter). */
-  tap?: { letters: string[] }
-  /** Letters with short vowels shown in order (blending). */
-  syllables?: string[]
-  options: Option[]
-  pairs: Pair[]
-  /** Option id, or for tap questions the letter index(es) joined by commas. */
-  answer: string
-  /** Ways to explain the answer; one is chosen each time so it does not repeat word for word. */
-  explain: Explanation[]
-  difficulty: number
-  skills: string[]
+export function arLines(group: ArGroup): Line[] {
+  return AR_LINES[group].map((text, n) => ({ text, clip: clip.ar(group, n) }))
 }
 
+/** A spoken line as it is shown on screen. */
+export function shown(text: string): string {
+  return text.trim()
+}
+
+/** A question style's line set, with its first line as the one asked until a round picks. */
+function voiced(group: LineGroup, before: string[] = []): Pick<Question, 'lines' | 'ask' | 'help'> {
+  return { lines: group, ask: [...before, clip.line(group)], help: shown(ASK_LINES[group][0]) }
+}
+
+// ── Question builders ─────────────────────────────────────────────────────
 type Extra = { difficulty: number }
 
-function base(key: string, topic: TopicId, kind: QuestionKind, prompt: string, ask: string[], skills: string[], extra: Extra) {
-  return { key: `${topic}:${key}`, topic, kind, prompt, ask, options: [] as Option[], pairs: [] as Pair[], skills, ...extra }
+const SKILLS: Record<Format, string[]> = {
+  'pic-for-letter': ['letter_picture', 'initial_sound'],
+  'letter-sound': ['initial_sound', 'letter_writing'],
+  missing: ['missing_letter', 'spelling'],
+  blend: ['blending', 'short_vowels'],
+  copy: ['handwriting', 'copying'],
 }
 
-const letterOption = (char: string): Option => ({ id: char, art: `txt:${char}`, label: `حرف ${letterOf(char).name}` })
-const pictureOption = (word: string): Option => ({ id: word, art: pictureOf(word), label: word, clip: clip.word(word) })
+function pickOne<T>(items: readonly T[], random: Random): T {
+  return items[Math.floor(random() * items.length)] ?? items[0]!
+}
+
+/** `count` different items, in random order. */
+function pickSome<T>(items: readonly T[], count: number, random: Random): T[] {
+  const pool = [...items]
+  const picked: T[] = []
+  while (picked.length < count && pool.length > 0) picked.push(...pool.splice(Math.floor(random() * pool.length), 1))
+  return picked
+}
+
+function base(key: string, topic: TopicId, kind: QuestionKind, format: Format, extra: Extra) {
+  return { key: `${topic}:${key}`, topic, kind, format, options: [] as Option[], reveal: [] as string[], explain: [] as Spoken[], note: '', skills: SKILLS[format], ...extra }
+}
 
 function pictureOf(word: string): string {
   const art = WORDS[word]?.art
@@ -363,311 +571,267 @@ function pictureOf(word: string): string {
   return art
 }
 
-/** A letter, then the picture that starts with it (skill 1). */
-function picFor(char: string, word: string, others: string[], extra: Extra): Question {
+const pictureOption = (word: string): Option => ({ id: word, art: pictureOf(word), label: word, clip: clip.word(word) })
+const letterKey = (char: string): Option => ({ id: char, art: `txt:${char}`, label: `حرف ${letterOf(char).name}` })
+
+/** Six letter keys in the book's order: the answer, its look-alikes and others from the unit. */
+function keysFor(char: string, random?: Random): Option[] {
+  const near = LOOK_ALIKE[char] ?? []
+  const rest = LETTERS.map((letter) => letter.char).filter((other) => other !== char && !near.includes(other))
+  const others = random ? pickSome(rest, 3, random) : rest.slice(0, 3)
+  const chosen = new Set([char, ...near, ...others])
+  return LETTERS.filter((letter) => chosen.has(letter.char)).map((letter) => letterKey(letter.char))
+}
+
+/** Two pictures for other letters: one for a look-alike letter where the unit has one. */
+function decoyPictures(char: string, random?: Random): string[] {
+  const near = (LOOK_ALIKE[char] ?? []).flatMap((other) => PICTURE_WORDS[other] ?? [])
+  const far = LETTERS.filter((letter) => letter.char !== char && !(LOOK_ALIKE[char] ?? []).includes(letter.char)).flatMap((letter) => PICTURE_WORDS[letter.char] ?? [])
+  if (!random) return [near[0]!, far[0]!]
+  return [pickOne(near, random), pickOne(far, random)]
+}
+
+/** 1. A letter, then the picture that starts with it (three pictures, as the book circles them). */
+function picFor(char: string, extra: Extra): Question {
+  const letter = letterOf(char)
+  const dress = (answer: string, decoys: string[]): Dress => ({
+    options: [answer, ...decoys].map(pictureOption),
+    answer,
+    reveal: [clip.word(answer)],
+    explain: [clip.word(answer), clip.starts(char)],
+    note: `${answer} تبدأ بحرف ${letter.name}`,
+  })
+  const words = PICTURE_WORDS[char]!
   return {
-    ...base(`${slug(char)}-pic`, 'picture', 'pick', 'أي صورة تبدأ بهذا الحرف؟', [clip.name(char), clip.ask('pic-for-letter')], ['letter_picture'], extra),
+    ...base(letter.id, 'picture', 'pick', 'pic-for-letter', extra),
+    ...voiced('pic-for-letter', [clip.name(char)]),
+    letter: char,
     subject: `txt:${char}`,
-    options: [word, ...others].map(pictureOption),
-    answer: word,
-    explain: startsWith(word),
+    ...(dress(words[0]!, decoyPictures(char)) as Required<Pick<Dress, 'options' | 'answer' | 'reveal' | 'explain' | 'note'>>),
+    vary: (random) => dress(pickOne(words, random), decoyPictures(char, random)),
   }
 }
 
-/** A picture, then its first letter (skill 3: the letter a picture starts with). */
-function letterFor(word: string, others: string[], extra: Extra): Question {
-  const char = lettersOf(word)[0]!
-  return {
-    ...base(`${wordSlug(word)}-letter`, 'picture', 'pick', 'بأي حرف تبدأ هذه الكلمة؟', [clip.word(word), clip.ask('letter-for-pic')], ['initial_sound'], extra),
+/** 2. A picture, then its first letter written in the box (the review's «أشاهد - أكتب»). */
+function soundOf(char: string, extra: Extra): Question {
+  const letter = letterOf(char)
+  const dress = (word: string, keys: Option[]): Dress => ({
+    ask: [clip.word(word), clip.line('letter-sound')],
     subject: pictureOf(word),
-    options: [char, ...others].map(letterOption),
+    word,
+    options: keys,
+    explain: [clip.word(word), clip.starts(char)],
+    note: `${word} تبدأ بحرف ${letter.name}`,
+  })
+  const words = PICTURE_WORDS[char]!
+  const first = dress(words[0]!, keysFor(char))
+  return {
+    ...base(letter.id, 'sound', 'keys', 'letter-sound', extra),
+    ...voiced('letter-sound'),
+    ...first,
+    ask: first.ask!,
+    letter: char,
+    options: first.options!,
+    explain: first.explain!,
+    note: first.note!,
     answer: char,
-    explain: startsWith(word),
+    reveal: [clip.name(char)],
+    vary: (random) => dress(pickOne(words, random), keysFor(char, random)),
   }
 }
 
-/** The worksheet's «join» exercise: letters first, then their pictures. */
-function board(key: string, words: string[], extra: Extra): Question {
-  return {
-    ...base(`board-${key}`, 'picture', 'match', 'نوصل كل حرف بالصورة التي تبدأ به', [clip.ask('match-pic')], ['letter_picture', 'matching'], extra),
-    pairs: words.map((word) => {
-      const char = lettersOf(word)[0]!
-      return { id: char, first: `txt:${char}`, second: pictureOf(word), label: `حرف ${letterOf(char).name}`, clip: clip.name(char) }
-    }),
-    answer: '',
-    explain: [{ text: words.map((word) => startsWith(word)[0]!.text).join('\n'), clips: words.flatMap((word) => startsWith(word)[0]!.clips) }],
-  }
-}
-
-/** Tap the letter inside the word (skill 2: circle the letter). */
-function find(char: string, word: string, extra: Extra): Question {
-  const letters = lettersOf(word)
-  const indexes = letters.flatMap((letter, index) => (letter === char ? [index] : []))
-  if (indexes.length === 0) throw new Error(`${word} has no ${char}`)
-  return {
-    ...base(`${slug(char)}-${wordSlug(word)}`, 'find', 'tap', `أين حرف ${letterOf(char).name}؟`, [clip.word(word), clip.where(char)], ['letter_in_word'], extra),
-    subject: WORDS[word]!.art,
-    tap: { letters },
-    answer: indexes.join(','),
-    explain: [dotsOf(char), { text: `في كلمة ${word}: حرف ${letterOf(char).name}`, clips: [clip.word(word), clip.name(char)] }],
-  }
-}
-
-/** The book's balloons: a letter's four shapes, or two for letters that never join the next one. */
-function shapesOf(char: string): Position[] {
-  return NON_JOINING.has(char) ? ['isolated', 'final'] : ['initial', 'medial', 'final', 'isolated']
-}
-
-/** Complete the word with the right shape of the letter (skill 4). */
-function shape(word: string, index: number, extra: Extra): Question {
+/** 3. A word with one letter missing and its picture (each lesson's «أكمل»). */
+function missing(word: string, index: number, extra: Extra): Question {
   const letters = lettersOf(word)
   const char = letters[index]!
-  const position = positionIn(letters, index)
   return {
-    ...base(`${wordSlug(word)}-${index + 1}`, 'form', 'pick', 'أي شكل للحرف يكمل الكلمة؟', [clip.word(word), clip.ask('form')], ['letter_form'], extra),
-    subject: WORDS[word]!.art,
-    gap: { letters, index },
-    options: shapesOf(char).map((form) => ({ id: form, art: `txt:${formOf(char, form)}`, label: formOf(char, form) })),
-    answer: position,
-    explain: [{ text: `حرف ${letterOf(char).name} ${POSITION_TEXT[position].text}`, clips: [clip.word(word), clip.ui(POSITION_TEXT[position].ui)] }],
+    ...base(wordId(word), 'missing', 'keys', 'missing', extra),
+    ...voiced('missing', [clip.word(word)]),
+    letter: char,
+    subject: pictureOf(word),
+    word,
+    gap: index,
+    options: keysFor(char),
+    answer: char,
+    reveal: [clip.word(word)],
+    explain: [clip.word(word), { line: 'x-missing' }, clip.name(char)],
+    note: word,
+    vary: (random) => ({ options: keysFor(char, random) }),
   }
 }
 
-export interface Blend {
-  id: string
-  word: string
-  syllables: string[]
+const bareLetters = (blend: Blend) => blend.syllables.map((syllable) => lettersOf(syllable)[0]!)
+
+/** Words of the bank that share the most letters with this one, closest first. */
+function nearBlends(blend: Blend): Blend[] {
+  const mine = bareLetters(blend)
+  const score = (other: Blend) => {
+    const theirs = bareLetters(other)
+    const same = theirs.filter((char, n) => char === mine[n]).length
+    const shared = theirs.filter((char) => mine.includes(char)).length
+    return same * 2 + shared
+  }
+  return BLENDS.filter((other) => other.id !== blend.id)
+    .map((other) => ({ other, value: score(other) }))
+    .sort((a, b) => b.value - a.value || a.other.id.localeCompare(b.other.id))
+    .map((entry) => entry.other)
 }
 
-// Voweled words from the book's letter-position pages (أَكَلَ، كَتَبَ، جَلَسَ…): three letters, short vowels.
-export const BLENDS: Blend[] = [
-  { id: 'akala', word: 'أَكَلَ', syllables: ['أَ', 'كَ', 'لَ'] },
-  { id: 'saala', word: 'سَأَلَ', syllables: ['سَ', 'أَ', 'لَ'] },
-  { id: 'kataba', word: 'كَتَبَ', syllables: ['كَ', 'تَ', 'بَ'] },
-  { id: 'fataha', word: 'فَتَحَ', syllables: ['فَ', 'تَ', 'حَ'] },
-  { id: 'bahatha', word: 'بَحَثَ', syllables: ['بَ', 'حَ', 'ثَ'] },
-  { id: 'jalasa', word: 'جَلَسَ', syllables: ['جَ', 'لَ', 'سَ'] },
-  { id: 'kharaja', word: 'خَرَجَ', syllables: ['خَ', 'رَ', 'جَ'] },
-  { id: 'sahaba', word: 'سَحَبَ', syllables: ['سَ', 'حَ', 'بَ'] },
-  { id: 'dakhala', word: 'دَخَلَ', syllables: ['دَ', 'خَ', 'لَ'] },
-  { id: 'dhahaba', word: 'ذَهَبَ', syllables: ['ذَ', 'هَ', 'بَ'] },
-  { id: 'rasama', word: 'رَسَمَ', syllables: ['رَ', 'سَ', 'مَ'] },
-  { id: 'shariba', word: 'شَرِبَ', syllables: ['شَ', 'رِ', 'بَ'] },
-  { id: 'tabaa', word: 'طَبَعَ', syllables: ['طَ', 'بَ', 'عَ'] },
-  { id: 'hafiza', word: 'حَفِظَ', syllables: ['حَ', 'فِ', 'ظَ'] },
-  { id: 'nazara', word: 'نَظَرَ', syllables: ['نَ', 'ظَ', 'رَ'] },
-]
-
-/** Letters with short vowels, then the word they make (skill 5). */
-function blendQ(blend: Blend, others: string[], extra: Extra): Question {
-  const byId = new Map(BLENDS.map((entry) => [entry.id, entry]))
+/** 4. Letters with short vowels, joined into the word they make (the book's «أركب»). */
+function blendQ(blend: Blend, extra: Extra): Question {
+  const near = nearBlends(blend)
+  const option = (entry: Blend): Option => ({ id: entry.id, art: `txt:${entry.word}`, label: entry.word })
+  const dress = (others: Blend[]): Dress => ({ options: [blend, ...others].map(option) })
   return {
-    // The syllables are shown, not spoken: read alone, a syllable can come out as the letter's name.
-    ...base(blend.id, 'blend', 'pick', 'ما الكلمة التي تتركب من هذه الحروف؟', [clip.ask('blend')], ['blending', 'short_vowels'], extra),
+    ...base(blend.id, 'blend', 'pick', 'blend', extra),
+    ...voiced('blend'),
     syllables: blend.syllables,
-    options: [blend, ...others.map((id) => byId.get(id)!)].map((entry) => ({ id: entry.id, art: `txt:${entry.word}`, label: entry.word })),
+    ...(dress(near.slice(0, 2)) as Required<Pick<Dress, 'options'>>),
     answer: blend.id,
-    explain: [{ text: `${blend.syllables.join(' + ')} = ${blend.word}`, clips: [clip.blend(blend.id)] }],
+    reveal: [clip.blend(blend.id)],
+    explain: [{ line: 'x-blend' }, clip.blend(blend.id)],
+    note: `${blend.syllables.join(' + ')} = ${blend.word}`,
+    vary: (random) => dress(pickSome(near.slice(0, 6), 2, random)),
   }
 }
 
-/** Two letters, then the same two among look-alikes (skill 6: copy two letters). */
-function copyQ(a: string, b: string, wrong: [string, string][], extra: Extra): Question {
-  const options = [[a, b], ...wrong].map(([x, y]) => ({ id: `${x}${y}`, art: `pair:${x} ${y}`, label: `${x} ${y}` }))
+/** 5. Copy a sentence: write over the grey sentence with a finger. */
+function copyQ(sentence: Sentence, extra: Extra): Question {
   return {
-    ...base(`${slug(a)}-${slug(b)}`, 'copy', 'pick', 'أين الحرفان نفسهما؟', [clip.ask('copy')], ['letter_shape', 'copying'], extra),
-    subject: `pair:${a} ${b}`,
-    options,
-    answer: `${a}${b}`,
-    explain: [{ text: `${dotsOf(a).text}\n${dotsOf(b).text}`, clips: [clip.dots(a), clip.dots(b)] }],
+    ...base(sentence.id, 'handwriting', 'trace', 'copy', extra),
+    ...voiced('copy', [clip.sentence(sentence.id)]),
+    text: sentence.text,
+    answer: sentence.text,
+    reveal: [clip.sentence(sentence.id)],
+    explain: [clip.sentence(sentence.id)],
+    note: sentence.text,
   }
 }
 
 const d = (difficulty: number): Extra => ({ difficulty })
+const sentence = (id: string) => SENTENCES.find((entry) => entry.id === id)!
 
 export const QUESTIONS: Question[] = [
-  // 1 and 3. Letter and picture (the book's pictures)
-  picFor('أ', 'أسد', ['بطة', 'جمل'], d(15)),
-  picFor('ب', 'بطريق', ['تفاح', 'ثعلب'], d(20)),
-  picFor('ت', 'تاج', ['بيت', 'ثوب'], d(30)),
-  picFor('ث', 'ثعبان', ['تمساح', 'سمكة'], d(35)),
-  picFor('ج', 'جبن', ['حصان', 'خروف'], d(30)),
-  picFor('ح', 'حمامة', ['جزر', 'خيار'], d(35)),
-  picFor('خ', 'خيار', ['حليب', 'جرس'], d(35)),
-  picFor('د', 'دب', ['ذرة', 'رجل'], d(30)),
-  picFor('ذ', 'ذئب', ['دجاجة', 'زرافة'], d(40)),
-  picFor('ر', 'رجل', ['زهرة', 'دراجة'], d(35)),
-  picFor('ز', 'زرافة', ['ريحان', 'ذبابة'], d(35)),
-  picFor('س', 'سنجاب', ['شمس', 'صقر'], d(30)),
-  picFor('ش', 'شوكة', ['سيارة', 'صندوق'], d(35)),
-  picFor('ص', 'صنارة', ['سلحفاة', 'ضفدع'], d(40)),
-  picFor('ض', 'ضفدع', ['صقر', 'ظرف'], d(45)),
-  picFor('ط', 'طائرة', ['ظبي', 'تاج'], d(40)),
-  picFor('ظ', 'ظبي', ['طبل', 'ضماد'], d(50)),
-  letterFor('أرنب', ['ب', 'ر'], d(20)),
-  letterFor('بركان', ['ت', 'ث'], d(25)),
-  letterFor('تمساح', ['ب', 'ث'], d(30)),
-  letterFor('ثلج', ['ت', 'ش'], d(40)),
-  letterFor('جزر', ['ح', 'خ'], d(35)),
-  letterFor('حليب', ['ج', 'خ'], d(40)),
-  letterFor('خبز', ['ح', 'ج'], d(40)),
-  letterFor('دجاجة', ['ذ', 'ر'], d(35)),
-  letterFor('ذرة', ['د', 'ز'], d(45)),
-  letterFor('ريحان', ['ز', 'د'], d(35)),
-  letterFor('زهرة', ['ر', 'ذ'], d(40)),
-  letterFor('سمكة', ['ش', 'ص'], d(35)),
-  letterFor('شمس', ['س', 'ث'], d(40)),
-  letterFor('صقر', ['س', 'ض'], d(45)),
-  letterFor('ضماد', ['ص', 'ظ'], d(50)),
-  letterFor('طبل', ['ظ', 'ت'], d(45)),
-  letterFor('ظرف', ['ط', 'ض'], d(55)),
-  board('a', ['أسد', 'بطة', 'تاج'], d(25)),
-  board('b', ['ثعلب', 'جمل', 'حصان'], d(35)),
-  board('c', ['خيمة', 'دب', 'ذرة'], d(40)),
-  board('d', ['رجل', 'زرافة', 'سمكة'], d(35)),
-  board('e', ['شمس', 'صقر', 'ضفدع'], d(45)),
-  board('f', ['طائرة', 'ظفر', 'خروف'], d(50)),
+  // 1. The picture for the letter (look-alike letters ف ق ك and ن ي are harder)
+  picFor('غ', d(30)),
+  picFor('ف', d(30)),
+  picFor('ق', d(35)),
+  picFor('ك', d(30)),
+  picFor('ل', d(25)),
+  picFor('م', d(20)),
+  picFor('ن', d(30)),
+  picFor('ه', d(30)),
+  picFor('و', d(25)),
+  picFor('ي', d(30)),
 
-  // 2. The letter in the word (the book's «ألاحظ» words)
-  find('أ', 'كأس', d(35)),
-  find('ب', 'جبل', d(35)),
-  find('ت', 'حوت', d(35)),
-  find('ث', 'ثمار', d(25)),
-  find('ج', 'درج', d(40)),
-  find('ح', 'سحب', d(40)),
-  find('خ', 'صاروخ', d(40)),
-  find('د', 'قرد', d(35)),
-  find('ذ', 'تلميذ', d(40)),
-  find('ر', 'جرس', d(35)),
-  find('ز', 'خبز', d(45)),
-  find('س', 'شمس', d(55)),
-  find('ش', 'ريش', d(35)),
-  find('ص', 'بصل', d(40)),
-  find('ض', 'بيض', d(45)),
-  find('ط', 'بطة', d(40)),
-  find('ظ', 'نظارة', d(50)),
+  // 2. The sound of the picture's first letter
+  soundOf('غ', d(40)),
+  soundOf('ف', d(40)),
+  soundOf('ق', d(45)),
+  soundOf('ك', d(40)),
+  soundOf('ل', d(35)),
+  soundOf('م', d(30)),
+  soundOf('ن', d(40)),
+  soundOf('ه', d(40)),
+  soundOf('و', d(35)),
+  soundOf('ي', d(40)),
 
-  // 4. Letter shapes: the book's «أختار - أكمل» exercises
-  shape('نبأ', 2, d(45)),
-  shape('بحر', 0, d(25)),
-  shape('عشب', 2, d(40)),
-  shape('ضبع', 1, d(45)),
-  shape('هتف', 1, d(45)),
-  shape('زيت', 2, d(40)),
-  shape('عنكبوت', 5, d(55)),
-  shape('مثل', 1, d(45)),
-  shape('ثقل', 0, d(35)),
-  shape('شجر', 1, d(40)),
-  shape('موج', 2, d(55)),
-  shape('ضحك', 1, d(45)),
-  shape('نجح', 2, d(45)),
-  shape('صخرة', 1, d(45)),
-  shape('بطيخ', 3, d(50)),
-  shape('بدر', 1, d(45)),
-  shape('ورد', 2, d(50)),
-  shape('نفذ', 2, d(50)),
-  shape('شرح', 1, d(45)),
-  shape('صدر', 2, d(50)),
-  shape('قفز', 2, d(45)),
-  shape('جلس', 2, d(45)),
-  shape('سكب', 0, d(35)),
-  shape('مشط', 1, d(45)),
-  shape('جيش', 2, d(45)),
-  shape('قصر', 1, d(45)),
-  shape('قميص', 3, d(50)),
-  shape('فضة', 1, d(50)),
-  shape('نبض', 2, d(50)),
-  shape('هطل', 1, d(50)),
-  shape('طرق', 0, d(35)),
-  shape('كظم', 1, d(55)),
-  shape('وعظ', 2, d(55)),
+  // 3. The missing letter: each lesson's «أكمل» words, then words from its pages
+  missing('ببغاء', 2, d(50)),
+  missing('مغناطيس', 1, d(50)),
+  missing('دماغ', 3, d(45)),
+  missing('فراشة', 0, d(30)),
+  missing('تفاح', 1, d(40)),
+  missing('رغيف', 3, d(45)),
+  missing('صوف', 2, d(40)),
+  missing('خروف', 3, d(40)),
+  missing('ضفدع', 1, d(45)),
+  missing('قرش', 0, d(30)),
+  missing('نقود', 1, d(45)),
+  missing('ورق', 2, d(40)),
+  missing('صندوق', 4, d(45)),
+  missing('قطار', 0, d(30)),
+  missing('كرة', 0, d(30)),
+  missing('سمكة', 2, d(45)),
+  missing('ديك', 2, d(40)),
+  missing('نيزك', 3, d(45)),
+  missing('شباك', 3, d(45)),
+  missing('مكنسة', 1, d(45)),
+  missing('حليب', 1, d(45)),
+  missing('عسل', 2, d(40)),
+  missing('برتقال', 5, d(50)),
+  missing('طفل', 2, d(40)),
+  missing('جمل', 2, d(40)),
+  missing('بصل', 2, d(40)),
+  missing('مقص', 0, d(30)),
+  missing('شمس', 1, d(40)),
+  missing('سلم', 2, d(40)),
+  missing('شمعة', 1, d(45)),
+  missing('نملة', 1, d(45)),
+  missing('منع', 1, d(45)),
+  missing('وزن', 2, d(45)),
+  missing('عين', 2, d(40)),
+  missing('أنف', 1, d(45)),
+  missing('سنجاب', 1, d(45)),
+  missing('حصان', 3, d(45)),
+  missing('عنب', 1, d(45)),
+  missing('وجه', 2, d(50)),
+  missing('مياه', 3, d(50)),
+  missing('مهرج', 1, d(50)),
+  missing('نهر', 1, d(50)),
+  missing('فهد', 1, d(50)),
+  missing('هدية', 0, d(35)),
+  missing('وعاء', 0, d(35)),
+  missing('موز', 1, d(40)),
+  missing('دلو', 2, d(45)),
+  missing('جرو', 2, d(45)),
+  missing('حوت', 1, d(45)),
+  missing('صاروخ', 3, d(45)),
+  missing('زيتون', 3, d(45)),
+  missing('يد', 0, d(30)),
+  missing('بيت', 1, d(40)),
+  missing('بيض', 1, d(40)),
+  missing('سيارة', 1, d(45)),
+  missing('كرسي', 3, d(45)),
 
-  // 5. Building a word from letters with short vowels (the book's words)
-  blendQ(BLENDS[0]!, ['saala', 'kataba'], d(30)),
-  blendQ(BLENDS[1]!, ['akala', 'sahaba'], d(40)),
-  blendQ(BLENDS[2]!, ['fataha', 'tabaa'], d(30)),
-  blendQ(BLENDS[3]!, ['kataba', 'bahatha'], d(35)),
-  blendQ(BLENDS[4]!, ['sahaba', 'fataha'], d(40)),
-  blendQ(BLENDS[5]!, ['dakhala', 'kharaja'], d(35)),
-  blendQ(BLENDS[6]!, ['dakhala', 'shariba'], d(35)),
-  blendQ(BLENDS[7]!, ['bahatha', 'saala'], d(40)),
-  blendQ(BLENDS[8]!, ['kharaja', 'dhahaba'], d(40)),
-  blendQ(BLENDS[9]!, ['dakhala', 'rasama'], d(40)),
-  blendQ(BLENDS[10]!, ['nazara', 'shariba'], d(40)),
-  blendQ(BLENDS[11]!, ['rasama', 'sahaba'], d(45)),
-  blendQ(BLENDS[12]!, ['kataba', 'hafiza'], d(45)),
-  blendQ(BLENDS[13]!, ['tabaa', 'nazara'], d(50)),
-  blendQ(BLENDS[14]!, ['hafiza', 'rasama'], d(50)),
+  // 4. Building a word: the unit's «أركب» rows
+  ...BLENDS.map((blend, n) => blendQ(blend, d([30, 40, 40, 45, 30, 35, 40, 40, 35, 50, 40, 40, 30, 40, 40, 45, 35, 40, 45, 35, 35, 40, 50, 40, 35, 40, 35, 45, 40, 45, 40, 45, 40, 45, 45, 45, 40][n]!))),
 
-  // 6. Copying two letters: the same pair among look-alikes (the book's «أميز» letters)
-  copyQ('ب', 'ت', [['ت', 'ث'], ['ب', 'ث']], d(30)),
-  copyQ('ت', 'ث', [['ث', 'ت'], ['ب', 'ث']], d(40)),
-  copyQ('ج', 'ح', [['ج', 'خ'], ['ح', 'خ']], d(35)),
-  copyQ('ح', 'خ', [['ج', 'خ'], ['خ', 'ح']], d(40)),
-  copyQ('ج', 'خ', [['ح', 'خ'], ['ج', 'ح']], d(40)),
-  copyQ('د', 'ذ', [['ذ', 'د'], ['د', 'ر']], d(35)),
-  copyQ('ر', 'ز', [['ز', 'ر'], ['ر', 'ذ']], d(35)),
-  copyQ('س', 'ش', [['ش', 'س'], ['س', 'ص']], d(40)),
-  copyQ('ص', 'ض', [['ض', 'ص'], ['ص', 'ط']], d(45)),
-  copyQ('ط', 'ظ', [['ظ', 'ط'], ['ط', 'ض']], d(45)),
-  copyQ('ب', 'ث', [['ت', 'ث'], ['ب', 'ت']], d(40)),
-  copyQ('ز', 'ذ', [['ر', 'ذ'], ['ز', 'د']], d(45)),
+  // 5. Copying a sentence: the book's five, then three in their pattern
+  copyQ(sentence('qaraa-hamad'), d(30)),
+  copyQ(sentence('qaraa-hamad-anas'), d(45)),
+  copyQ(sentence('dhahaba-hamad'), d(30)),
+  copyQ(sentence('dhahaba-hamad-amal'), d(40)),
+  copyQ(sentence('yaqifu-hamad-umar'), d(45)),
+  copyQ(sentence('saala-anas'), d(30)),
+  copyQ(sentence('fariha-umar'), d(30)),
+  copyQ(sentence('laiba-hamad-anas'), d(45)),
 ]
 
-// ── Narration ─────────────────────────────────────────────────────────────
-// Kuwaiti (Maryam Essa): instructions, topic introductions and cheers.
-export const ASK_CLIPS = {
-  'pic-for-letter': 'أي صورة تبدأ بهذا الحرف؟',
-  'letter-for-pic': 'بأي حرف تبدأ هذي الكلمة؟',
-  form: 'أي شكل للحرف يكمل الكلمة؟',
-  blend: 'شنو الكلمة اللي تتركب من هذي الحروف؟',
-  copy: 'وين الحرفين نفسهم بالضبط؟',
-  'match-pic': 'نوصل كل حرف بالصورة اللي تبدأ فيه… نبدأ بالحرف.',
-} as const
-export type AskClip = keyof typeof ASK_CLIPS
+/** Cheers for any question. */
+export const CHEERS: Line[] = arLines('cheer')
 
-export const UI_CLIPS = {
-  welcome: 'هلا والله! هذا اختبار اللغة العربية… نختار درس، ونبدأ.',
-  'test-intro': 'هذا اختبار تجريبي… فيه أسئلة من كل الدروس. يلا نبدأ!',
-  'match-wrong': 'لا… نجرب مرة ثانية.',
-  'match-first': 'نختار الحرف أول… وبعدين الصورة.',
-  review: 'خلنا نتذكر مع بعض…',
-  'done-great': 'واو! نتيجة رائعة!',
-  'done-good': 'حلو! نتدرب مرة ثانية… ونصير أقوى.',
-  'pos-initial': 'الحرف في أول الكلمة… فيتصل باللي بعده.',
-  'pos-medial': 'الحرف في وسط الكلمة… فيتصل من الجهتين.',
-  'pos-final': 'الحرف في آخر الكلمة… فيتصل باللي قبله.',
-  'pos-isolated': 'الحرف هنا ما يتصل… فينكتب لحاله.',
-  'cheer-1': 'كفو!',
-  'cheer-2': 'ما شاء الله! صح.',
-  'cheer-3': 'واو! جواب صح!',
-  'cheer-4': 'برافو! جواب ممتاز.',
-  'cheer-5': 'الله! جواب حلو.',
-  'cheer-6': 'تمام التمام!',
-  'cheer-7': 'عفية!',
-  'cheer-8': 'صح! رائع.',
-  'cheer-9': 'زين! جواب صحيح.',
-  'cheer-10': 'يا سلام! صح.',
-  'retry-1': 'مو مشكلة… الجواب الصح…',
-  'retry-2': 'قربنا! الجواب الصح…',
-  'retry-3': 'خلنا نتعلمها مع بعض… الجواب الصح…',
-  'retry-4': 'محاولة حلوة! الجواب الصح…',
-  'retry-5': 'نشوف مع بعض… الجواب الصح…',
-} as const
-export type UiClip = keyof typeof UI_CLIPS
+/** Kind words after a wrong choice. */
+export const RETRIES: Line[] = arLines('retry')
 
-export interface Cheer {
-  text: string
-  clip: string
+const OWN_CHEERS: Record<Format, ArGroup> = {
+  'pic-for-letter': 'cheer-picture',
+  'letter-sound': 'cheer-sound',
+  missing: 'cheer-missing',
+  blend: 'cheer-blend',
+  copy: 'cheer-trace',
 }
 
-export const CHEERS: Cheer[] = (Object.keys(UI_CLIPS) as UiClip[])
-  .filter((id) => id.startsWith('cheer-'))
-  .map((id) => ({ text: UI_CLIPS[id], clip: clip.ui(id) }))
+/** Cheers made for this kind of question. */
+export function ownCheers(question: Pick<Question, 'format'>): Line[] {
+  return arLines(OWN_CHEERS[question.format])
+}
 
-export const RETRIES = (Object.keys(UI_CLIPS) as UiClip[])
-  .filter((id) => id.startsWith('retry-'))
-  .map((id) => ({ text: UI_CLIPS[id].replace('الجواب الصح…', '').replace('…', '').trim(), clip: clip.ui(id) }))
+/** The streak cheers, by how many right answers ran. */
+export const STREAKS: Record<number, Line[]> = {
+  3: arLines('streak-3'),
+  5: arLines('streak-5'),
+}
 
 export interface AudioCue {
   id: string
@@ -680,39 +844,48 @@ export function bare(text: string): string {
   return text.replace(/[ً-ْٰ]/g, '')
 }
 
+function groupCues<G extends string>(lines: Record<G, readonly string[]>, id: (group: G, n: number) => string): AudioCue[] {
+  return (Object.keys(lines) as G[]).flatMap((group) => lines[group].map((text, n) => ({ id: id(group, n), text: bare(text), voice: 'ar' as const })))
+}
+
 export function audioCues(): AudioCue[] {
   const fs = (id: string, text: string): AudioCue => ({ id, text, voice: 'fs' })
-  const ar = (id: string, text: string): AudioCue => ({ id, text: bare(text), voice: 'ar' })
   return [
-    ...LETTERS.flatMap((letter) => [
-      fs(clip.name(letter.char), `حَرْفُ ${letter.spoken}.`),
-      fs(clip.where(letter.char), `أَيْنَ حَرْفُ ${letter.spoken}؟`),
-      fs(clip.starts(letter.char), `تَبْدَأُ بِحَرْفِ ${letter.spoken}.`),
-      fs(clip.dots(letter.char), `حَرْفُ ${letter.spoken}، ${letter.dotsSpoken}.`),
-    ]),
+    ...LETTERS.flatMap((letter) => [fs(clip.name(letter.char), `حَرْفُ ${letter.spoken}.`), fs(clip.starts(letter.char), `تَبْدَأُ بِحَرْفِ ${letter.spoken}.`)]),
     ...Object.entries(WORDS).map(([word, entry]) => fs(clip.word(word), `${entry.spoken}.`)),
     ...BLENDS.map((blend) => fs(clip.blend(blend.id), `${blend.word}.`)),
-    ...(Object.keys(ASK_CLIPS) as AskClip[]).map((id) => ar(clip.ask(id), ASK_CLIPS[id])),
-    ...TOPICS.map((topic) => ar(clip.topic(topic.id), topic.say)),
-    ...(Object.keys(UI_CLIPS) as UiClip[]).map((id) => ar(clip.ui(id), UI_CLIPS[id])),
+    ...SENTENCES.map((entry) => fs(clip.sentence(entry.id), entry.text)),
+    ...groupCues(ASK_LINES, clip.line),
+    ...groupCues(AR_LINES, clip.ar),
   ]
+}
+
+/** Every clip of one of Maryam's line sets. */
+export function lineClips(group: LineGroup): string[] {
+  return ASK_LINES[group].map((_, n) => clip.line(group, n))
+}
+
+/** Every clip a question can play in any of its draws, with any of its lines. */
+function questionClips(question: Question): string[] {
+  const clips = [...question.ask, ...question.reveal, ...question.options.flatMap((option) => (option.clip ? [option.clip] : []))]
+  clips.push(...lineClips(question.lines))
+  for (const item of question.explain) clips.push(...(typeof item === 'string' ? [item] : arLines(item.line).map((line) => line.clip)))
+  // A draw can bring any picture word of the unit, and the letter's «تبدأ بحرف».
+  if (question.format === 'pic-for-letter' || question.format === 'letter-sound') {
+    clips.push(...Object.values(PICTURE_WORDS).flat().map(clip.word))
+  }
+  return clips
 }
 
 /** Every clip a round needs, so it can be loaded before the first question. */
 export function roundClips(questions: Question[]): string[] {
+  const moments: ArGroup[] = ['trace-again', 'review', 'retry', 'part-1', 'part-2', 'part-3', 'part-4', 'part-5']
   return [
-    ...questions.flatMap((question) => [
-      ...question.ask,
-      ...question.options.flatMap((option) => (option.clip ? [option.clip] : [])),
-      ...question.pairs.map((pair) => pair.clip),
-      ...question.explain.flatMap((way) => way.clips),
+    ...new Set([
+      ...questions.flatMap(questionClips),
+      ...moments.flatMap((group) => arLines(group).map((line) => line.clip)),
+      ...[...CHEERS, ...questions.flatMap(ownCheers), ...Object.values(STREAKS).flat()].map((line) => line.clip),
+      ...[...arLines('done-great'), ...arLines('done-good')].map((line) => line.clip),
     ]),
-    clip.ui('match-wrong'),
-    clip.ui('match-first'),
-    clip.ui('review'),
-    ...CHEERS.map((cheer) => cheer.clip),
-    ...RETRIES.map((retry) => retry.clip),
-    clip.ui('done-great'),
-    clip.ui('done-good'),
   ]
 }

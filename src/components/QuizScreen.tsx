@@ -1,37 +1,20 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Art } from '../art/Art'
 import { celebrate } from '../art/confetti'
 import { useNarrator } from '../audio/NarratorContext'
 import type { Cue } from '../audio/player'
 import { sfx } from '../audio/sfx'
-import { CHEERS, RETRIES, clip, joinedPieces, roundClips, type Cheer, type Option, type Pair, type Question } from '../data/catalog'
+import { CHEERS, FORMATS, joinedPieces, lettersOf, roundClips, shown, type Line as Spoken, type Option, type Question } from '../data/catalog'
 import { TONES, toneStyle, type ToneId } from '../data/tones'
 import { arabicNumber } from '../domain/format'
-import { arrangeOptions, shuffle } from '../domain/round'
+import { arrangeOptions, testSlot } from '../domain/round'
+import { cheerFor, explainClips, kindWord, sayLine } from '../domain/voice'
 import type { Attempt } from '../hub/bridge'
+import { TraceBoard } from './TraceBoard'
 import { ArrowIcon, BigButton, CloseButton, SpeakerButton, StarIcon, order } from './ui'
-
-/** Cheers rest for this many answers before they can come back. */
-const CHEER_REST = 5
 
 // Narration starts once the question has settled on screen.
 const ASK_DELAY_MS = 380
-
-/** A random item that was not used recently; the pick joins the recent list. */
-function fresh<T>(items: readonly T[], recent: T[], rest: number): T {
-  const pool = items.filter((item) => !recent.includes(item))
-  const pick = pool[Math.floor(Math.random() * pool.length)] ?? items[0]!
-  recent.push(pick)
-  if (recent.length > rest) recent.shift()
-  return pick
-}
-
-/** A stable number from text, so each round can explain an answer a different way. */
-function spread(text: string): number {
-  let hash = 0
-  for (const char of text) hash = (hash * 31 + char.charCodeAt(0)) >>> 0
-  return hash
-}
 
 export interface Round {
   id: number
@@ -42,41 +25,40 @@ export interface Round {
 
 interface QuizScreenProps {
   round: Round
-  /** Played once before question one: the lesson or mock-test introduction. */
-  intro?: string
+  /** Play the mock-test introduction before the first question. */
+  intro?: boolean
   onExit: () => void
   onFinish: (attempts: Attempt[]) => void
 }
 
 type Phase = 'asking' | 'answered'
 
-export function QuizScreen({ round, intro, onExit, onFinish }: QuizScreenProps) {
+export function QuizScreen({ round, intro = false, onExit, onFinish }: QuizScreenProps) {
   const narrator = useNarrator()
   const [index, setIndex] = useState(0)
   const [phase, setPhase] = useState<Phase>('asking')
   const [chosen, setChosen] = useState<string | null>(null)
-  const [speakingOption, setSpeakingOption] = useState<string | null>(null)
   const [attempts, setAttempts] = useState<Attempt[]>([])
-  const [cheer, setCheer] = useState<Cheer>(CHEERS[0]!)
-  const [retry, setRetry] = useState(RETRIES[0]!)
+  const [speakingOption, setSpeakingOption] = useState<string | null>(null)
+  // What was said after the answer: the cheer or the kind word, then what «إعادة» replays.
+  const [said, setSaid] = useState<{ line: Spoken; replay: Cue[] }>({ line: CHEERS[0]!, replay: [] })
+  const streak = useRef(0)
   const [confirmExit, setConfirmExit] = useState(false)
-  const recentCheers = useRef<Cheer[]>([])
-  const recentRetries = useRef<(typeof RETRIES)[number][]>([])
-  const tileRefs = useRef(new Map<string, HTMLElement>())
-  const optionsRef = useRef<HTMLDivElement>(null)
+  const tileRefs = useRef(new Map<string, HTMLButtonElement>())
+  const bodyRef = useRef<HTMLDivElement>(null)
 
   const question = round.questions[index]!
   const options = useMemo(() => arrangeOptions(question), [question])
-  // One of the question's explanations, picked afresh for every round.
-  const explanation = useMemo(() => question.explain[spread(`${round.id}:${question.key}`) % question.explain.length]!, [question, round.id])
-  const correctOption = question.options.find((option) => option.id === question.answer)
+  const info = FORMATS[question.format]
+  const slot = round.kind === 'test' ? testSlot(index) : null
   const tone = round.kind === 'test' ? question.topic : round.tone
-  const explainCues: Cue[] = explanation.clips.map((id, n) => ({ clip: id, gap: n === 0 ? 450 : 200 }))
-
+  const correctOption = question.options.find((option) => option.id === question.answer)
+  const revealCues: Cue[] = question.reveal.map((id, n) => ({ clip: id, gap: n === 0 ? 300 : 220 }))
+  // After the question, each picture's name is read while its tile lights up.
   const askCues = useMemo<Cue[]>(
     () => [
-      ...question.ask.map((id, n) => ({ clip: id, gap: n === 0 ? 0 : 200, onStart: () => setSpeakingOption(null) })),
-      ...options.flatMap((option) => (option.clip ? [{ clip: option.clip, onStart: () => setSpeakingOption(option.id) }] : [])),
+      ...question.ask.map((id, n) => ({ clip: id, gap: n === 0 ? 0 : 160, onStart: () => setSpeakingOption(null) })),
+      ...options.flatMap((option) => (option.clip ? [{ clip: option.clip, gap: 320, onStart: () => setSpeakingOption(option.id) }] : [])),
     ],
     [question, options],
   )
@@ -87,12 +69,17 @@ export function QuizScreen({ round, intro, onExit, onFinish }: QuizScreenProps) 
   }, [narrator, round.questions])
 
   useEffect(() => {
-    const opening = intro && index === 0 ? [{ clip: intro }, { ...askCues[0]!, gap: 500 }, ...askCues.slice(1)] : askCues
+    // The mock test opens with its introduction, and each of its questions with its heading.
+    const before = [
+      ...(intro && index === 0 ? [{ clip: sayLine('test-intro').clip }] : []),
+      ...(slot?.first ? [{ clip: sayLine(`part-${slot.part}` as 'part-1').clip, gap: 300 }] : []),
+    ]
+    const opening = before.length > 0 ? [...before, { ...askCues[0]!, gap: 500 }, ...askCues.slice(1)] : askCues
     const timer = window.setTimeout(() => {
       void narrator.play(opening).then(() => setSpeakingOption(null))
     }, ASK_DELAY_MS)
     return () => window.clearTimeout(timer)
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- the introduction plays once, before question one
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the intro plays once, before question one
   }, [askCues, narrator])
 
   useEffect(() => () => narrator.stop(), [narrator])
@@ -105,7 +92,7 @@ export function QuizScreen({ round, intro, onExit, onFinish }: QuizScreenProps) 
   useEffect(() => {
     if (phase !== 'answered') return
     const timer = window.setTimeout(() => {
-      const box = optionsRef.current?.getBoundingClientRect()
+      const box = bodyRef.current?.getBoundingClientRect()
       const sheet = document.querySelector('.feedback')?.getBoundingClientRect()
       if (!box || !sheet) return
       const overlap = box.bottom + 12 - sheet.top
@@ -115,45 +102,36 @@ export function QuizScreen({ round, intro, onExit, onFinish }: QuizScreenProps) 
   }, [phase])
 
   function replay() {
-    if (phase === 'asking') void narrator.play(askCues).then(() => setSpeakingOption(null))
-    else void narrator.play(explainCues)
+    void narrator.play(phase === 'asking' ? askCues : said.replay).then(() => setSpeakingOption(null))
   }
 
   function settle(correct: boolean, chosenId: string, anchor?: HTMLElement | null) {
     setPhase('answered')
+    setSpeakingOption(null)
     setAttempts((list) => [...list, { questionKey: question.key, chosen: chosenId, correct }])
+    // A miss explains the answer: how to find the picture, the letter, the word or the sentence.
+    const explainCues: Cue[] = explainClips(question).map((id, n) => ({ clip: id, gap: n === 0 ? 300 : 220 }))
     if (correct) {
       sfx.correct()
-      const pick = fresh(CHEERS, recentCheers.current, CHEER_REST)
-      setCheer(pick)
+      streak.current += 1
+      const line = cheerFor(question, streak.current)
+      setSaid({ line, replay: revealCues.length > 0 ? revealCues : explainCues })
       celebrate(anchor ?? undefined, TONES[tone].tone)
-      void narrator.play([{ clip: pick.clip, gap: 300 }, ...explainCues])
-    } else if (question.kind === 'match') {
-      sfx.wrong()
-      void narrator.play([{ clip: clip.ui('review'), gap: 450 }, ...explainCues])
+      void narrator.play([{ clip: line.clip, gap: 300 }, ...revealCues])
     } else {
       sfx.wrong()
-      const pick = fresh(RETRIES, recentRetries.current, 2)
-      setRetry(pick)
-      const reveal: Cue[] = correctOption?.clip ? [{ clip: correctOption.clip, gap: 120 }] : []
-      void narrator.play([{ clip: pick.clip, gap: 450 }, ...reveal, ...explainCues])
+      streak.current = 0
+      const line = question.kind === 'trace' ? sayLine('review') : kindWord()
+      setSaid({ line, replay: explainCues })
+      void narrator.play([{ clip: line.clip, gap: 450 }, ...explainCues])
     }
   }
 
   function answer(option: Option) {
     if (phase !== 'asking') return
     narrator.stop()
-    setSpeakingOption(null)
     setChosen(option.id)
     settle(option.id === question.answer, option.id, tileRefs.current.get(option.id))
-  }
-
-  function tapLetter(letterIndex: number) {
-    if (phase !== 'asking') return
-    narrator.stop()
-    const id = String(letterIndex)
-    setChosen(id)
-    settle(question.answer.split(',').includes(id), `letter:${id}`, tileRefs.current.get(`tap-${id}`))
   }
 
   function next() {
@@ -169,13 +147,49 @@ export function QuizScreen({ round, intro, onExit, onFinish }: QuizScreenProps) 
   }
 
   const lastCorrect = attempts.at(-1)?.correct ?? false
-  const register = (id: string) => (node: HTMLElement | null) => {
-    if (node) tileRefs.current.set(id, node)
-    else tileRefs.current.delete(id)
+  const answered = phase === 'answered'
+
+  function optionState(option: Option): string {
+    const isChosen = chosen === option.id
+    const isAnswer = option.id === question.answer
+    if (!answered) return speakingOption === option.id ? 'is-speaking' : ''
+    if (isChosen) return isAnswer ? 'is-correct' : 'is-wrong'
+    return isAnswer ? 'is-reveal' : 'is-dim'
   }
 
+  function tileRef(id: string) {
+    return (node: HTMLButtonElement | null) => {
+      if (node) tileRefs.current.set(id, node)
+      else tileRefs.current.delete(id)
+    }
+  }
+
+  // The letter written in the box or the gap: the child's, then the answer.
+  const written = answered ? (chosen ?? question.answer) : null
+  const writtenTone = answered ? (lastCorrect ? 'good' : 'miss') : null
+
+  const keys = (
+    <div className="letter-keys" dir="rtl">
+      {options.map((option, n) => (
+        <button
+          key={option.id}
+          ref={tileRef(option.id)}
+          type="button"
+          className={`letter-key press rise ${optionState(option)}`}
+          style={order(n, { '--base-delay': '160ms' })}
+          onClick={() => answer(option)}
+          disabled={answered}
+          aria-label={option.label}
+          data-option={option.id}
+        >
+          {option.id}
+        </button>
+      ))}
+    </div>
+  )
+
   return (
-    <main className={`screen quiz-screen ${phase === 'answered' ? 'has-feedback' : ''}`} style={toneStyle(tone)}>
+    <main className={`screen quiz-screen ${answered ? 'has-feedback' : ''}`} style={toneStyle(tone)}>
       <header className="top-bar quiz-top">
         <CloseButton onClick={() => setConfirmExit(true)} />
         <div className="track" aria-label={`السؤال ${arabicNumber(index + 1)} من ${arabicNumber(round.questions.length)}`}>
@@ -198,118 +212,111 @@ export function QuizScreen({ round, intro, onExit, onFinish }: QuizScreenProps) 
         </span>
       </header>
 
-      <section key={question.key} className={`question question-${question.kind} topic-${question.topic} question-in`} data-question-key={question.key}>
-        <div className="prompt-row">
-          <SpeakerButton onClick={replay} />
-          <h1 className="prompt">{question.prompt}</h1>
+      <section
+        key={`${round.id}-${index}`}
+        className={`question question-${question.kind} format-${question.format} topic-${question.topic} question-in`}
+        data-question-key={question.key}
+        data-format={question.format}
+      >
+        <div className="paper-head">
+          <div className="paper-line">
+            {slot ? <span className="paper-part">{slot.title}:</span> : null}
+            <h1 className="paper-instruction">{info.instruction}</h1>
+          </div>
+          <div className="paper-help">
+            <SpeakerButton onClick={replay} />
+            <p>{question.help}</p>
+          </div>
         </div>
 
-        {question.subject || question.syllables || question.gap ? (
-          <div className={`subject pop ${subjectKind(question.subject ?? 'txt:')}`} style={order(0, { '--base-delay': '80ms' })} aria-hidden={!question.tap}>
-            {question.subject ? (
-              <span className="subject-art">
-                <Art art={question.subject} />
-              </span>
-            ) : null}
-            {question.syllables ? (
-              <span className="syllables">
-                {question.syllables.map((syllable, n) => (
-                  <span key={n} className="syllable-group">
-                    {n > 0 ? <span className="syllable-plus">+</span> : null}
-                    <span className="syllable rise" style={order(n, { '--base-delay': '120ms' })}>
-                      {syllable}
-                    </span>
-                  </span>
-                ))}
-              </span>
-            ) : null}
-            {question.gap ? <GapWord letters={question.gap.letters} index={question.gap.index} filled={phase === 'answered'} /> : null}
-          </div>
-        ) : null}
-
-        {question.kind === 'match' ? (
-          <div ref={optionsRef} className="match-wrap">
-            <MatchBoard
-              question={question}
-              locked={phase === 'answered'}
-              onFirst={(pair) => void narrator.play([{ clip: pair.clip }])}
-              onHit={() => sfx.tap()}
+        <div ref={bodyRef} className="paper-box">
+          {question.kind === 'trace' ? (
+            <TraceBoard
+              key={question.key}
+              text={question.text ?? ''}
+              locked={answered}
               onMiss={() => {
                 sfx.wrong()
-                void narrator.play([{ clip: clip.ui('match-wrong') }])
+                void narrator.play([{ clip: sayLine('trace-again').clip }])
               }}
-              onFirstColumnFirst={() => void narrator.play([{ clip: clip.ui('match-first') }])}
-              onDone={(mistakes, board) => settle(mistakes === 0, `mistakes:${mistakes}`, board)}
+              onDone={(correct, board) => settle(correct, correct ? 'traced' : 'not-traced', board)}
             />
-          </div>
-        ) : question.kind === 'tap' && question.tap ? (
-          <div ref={optionsRef} className="tap-word" dir="rtl">
-            {joinedPieces(question.tap.letters).map((piece, n) => {
-              const isAnswer = question.answer.split(',').includes(String(n))
-              const state =
-                phase === 'answered' ? (chosen === String(n) ? (isAnswer ? 'is-correct' : 'is-wrong') : isAnswer ? 'is-reveal' : '') : ''
-              return (
-                <button
-                  key={n}
-                  ref={register(`tap-${n}`)}
-                  type="button"
-                  className={`tap-letter ${state}`}
-                  onClick={() => tapLetter(n)}
-                  disabled={phase === 'answered'}
-                  aria-label={`الحرف ${arabicNumber(n + 1)}`}
-                  data-letter={n}
-                >
-                  {piece}
-                </button>
-              )
-            })}
-          </div>
-        ) : (
-          <div ref={optionsRef} className={`options holds-${optionKind(options[0]?.art ?? '')} count-${options.length}`}>
-            {options.map((option, n) => {
-              const isChosen = chosen === option.id
-              const isAnswer = option.id === question.answer
-              const state =
-                phase === 'answered'
-                  ? isChosen
-                    ? isAnswer
-                      ? 'is-correct'
-                      : 'is-wrong'
-                    : isAnswer
-                      ? 'is-reveal'
-                      : 'is-dim'
-                  : speakingOption === option.id
-                    ? 'is-speaking'
-                    : ''
-              return (
-                <div key={option.id} className="option-slot rise" style={order(n, { '--base-delay': '140ms' })}>
-                  <button
-                    ref={register(option.id)}
-                    type="button"
-                    className={`option ${optionKind(option.art)} ${state}`}
-                    onClick={() => answer(option)}
-                    disabled={phase === 'answered'}
-                    aria-label={option.label}
-                    data-option={option.id}
-                  >
-                    <span className="option-art" aria-hidden="true">
-                      <Art art={option.art} />
+          ) : null}
+
+          {question.format === 'letter-sound' ? (
+            <div className="missing-board">
+              <span className="missing-picture pop" aria-hidden="true">
+                <Art art={question.subject ?? ''} />
+              </span>
+              <span className={`sound-box ${written ? `is-filled is-${writtenTone} pop` : ''}`} aria-label={written ? `حرف ${written}` : 'المربع فاضي'}>
+                {written ?? ''}
+              </span>
+              {keys}
+            </div>
+          ) : null}
+
+          {question.format === 'missing' && question.word !== undefined && question.gap !== undefined ? (
+            <div className="missing-board">
+              <span className="missing-picture pop" aria-hidden="true">
+                <Art art={question.subject ?? ''} />
+              </span>
+              <GapWord word={question.word} index={question.gap} filled={written} tone={writtenTone} />
+              {keys}
+            </div>
+          ) : null}
+
+          {question.kind === 'pick' ? (
+            <>
+              {question.format === 'blend' && question.syllables ? (
+                <div className="build-row pop" dir="rtl" aria-label={`${question.syllables.join(' و ')}`}>
+                  {question.syllables.map((syllable, n) => (
+                    <span key={n} className="build-group">
+                      {n > 0 ? <span className="build-sign">+</span> : null}
+                      <span className="build-tile rise" style={order(n, { '--base-delay': '120ms' })}>
+                        {syllable}
+                      </span>
                     </span>
-                    {state === 'is-correct' || state === 'is-reveal' ? (
-                      <span className="option-badge badge-good pop">✓</span>
-                    ) : state === 'is-wrong' ? (
-                      <span className="option-badge badge-miss pop">✕</span>
-                    ) : null}
-                  </button>
+                  ))}
+                  <span className="build-sign">=</span>
+                  <span className={`build-answer ${answered ? `is-filled is-${lastCorrect ? 'good' : 'miss'}` : ''}`}>{answered && correctOption ? correctOption.label : ''}</span>
                 </div>
-              )
-            })}
-          </div>
-        )}
+              ) : question.subject ? (
+                <div className={`subject pop ${question.subject.startsWith('txt:') ? 'subject-text' : 'subject-picture'}`} style={order(0, { '--base-delay': '80ms' })} aria-hidden="true">
+                  <span className="subject-art">
+                    <Art art={question.subject} />
+                  </span>
+                </div>
+              ) : null}
+              <div className={`options holds-${optionKind(options[0]?.art ?? '')} count-${options.length}`} dir="rtl">
+                {options.map((option, n) => {
+                  const state = optionState(option)
+                  return (
+                    <div key={option.id} className="option-slot rise" style={order(n, { '--base-delay': '140ms' })}>
+                      <button
+                        ref={tileRef(option.id)}
+                        type="button"
+                        className={`option ${optionKind(option.art)} ${state}`}
+                        onClick={() => answer(option)}
+                        disabled={answered}
+                        aria-label={option.label}
+                        data-option={option.id}
+                      >
+                        <span className="option-art" aria-hidden="true">
+                          <Art art={option.art} />
+                        </span>
+                        {state === 'is-correct' || state === 'is-reveal' ? <InkRing tone="good" /> : state === 'is-wrong' ? <InkRing tone="miss" /> : null}
+                      </button>
+                    </div>
+                  )
+                })}
+              </div>
+            </>
+          ) : null}
+        </div>
       </section>
 
-      {phase === 'answered' ? (
-        <aside key={`feedback-${question.key}`} className={`feedback ${lastCorrect ? 'feedback-good' : 'feedback-miss'}`} role="status">
+      {answered ? (
+        <aside key={`feedback-${index}`} className={`feedback ${lastCorrect ? 'feedback-good' : 'feedback-miss'}`} role="status">
           <div className="feedback-head">
             {lastCorrect ? (
               <span className="feedback-star spin-in">
@@ -322,15 +329,15 @@ export function QuizScreen({ round, intro, onExit, onFinish }: QuizScreenProps) 
             )}
             <div className="feedback-titles">
               {lastCorrect ? (
-                <p className="feedback-title">{cheer.text}</p>
-              ) : question.kind === 'match' || question.kind === 'tap' ? (
-                <p className="feedback-title">خلنا نتذكر:</p>
+                <p className="feedback-title">{shown(said.line.text)}</p>
+              ) : question.kind === 'trace' ? (
+                <p className="feedback-title">{shown(said.line.text)}</p>
               ) : (
                 <>
-                  <p className="feedback-encourage">{retry.text}</p>
+                  <p className="feedback-encourage">{shown(said.line.text)}</p>
                   <p className="feedback-title">الجواب الصحيح:</p>
-                  {correctOption ? (
-                    <span className={`feedback-answer ${optionKind(correctOption.art)}`} aria-label={correctOption.label}>
+                  {question.format === 'pic-for-letter' && correctOption ? (
+                    <span className="feedback-answer" aria-label={correctOption.label}>
                       <Art art={correctOption.art} />
                     </span>
                   ) : null}
@@ -338,15 +345,11 @@ export function QuizScreen({ round, intro, onExit, onFinish }: QuizScreenProps) 
               )}
             </div>
           </div>
-          <ul className="feedback-facts">
-            {explanation.text.split('\n').map((line) => (
-              <li key={line} className="feedback-fact">
-                {line}
-              </li>
-            ))}
-          </ul>
+          <p className="feedback-note" dir="rtl">
+            <FeedbackNote question={question} />
+          </p>
           <div className="feedback-actions">
-            <SpeakerButton onClick={() => void narrator.play(explainCues)} label="إعادة الشرح" />
+            <SpeakerButton onClick={() => void narrator.play(said.replay)} label="إعادة" />
             <BigButton onClick={next} pulse className="next-button">
               {index + 1 >= round.questions.length ? 'النتيجة' : 'التالي'}
               <ArrowIcon direction="next" />
@@ -375,177 +378,56 @@ export function QuizScreen({ round, intro, onExit, onFinish }: QuizScreenProps) 
   )
 }
 
-function subjectKind(art: string): string {
-  if (art.startsWith('txt:') || art.startsWith('pair:')) return 'subject-text'
-  return 'subject-picture'
+/** The answer in words: the word with its letter in colour, the joined word, or the sentence. */
+function FeedbackNote({ question }: { question: Question }) {
+  if (question.format === 'missing' && question.word !== undefined && question.gap !== undefined) {
+    const pieces = joinedPieces(lettersOf(question.word))
+    return (
+      <>
+        {pieces.slice(0, question.gap).join('')}
+        <span className="first-letter">{pieces[question.gap]}</span>
+        {pieces.slice(question.gap + 1).join('')}
+      </>
+    )
+  }
+  if (question.format === 'letter-sound' && question.word) {
+    const pieces = joinedPieces(lettersOf(question.word))
+    return (
+      <>
+        <span className="first-letter">{pieces[0]}</span>
+        {pieces.slice(1).join('')}
+        <span className="note-sep"> ← </span>
+        <span className="first-letter">{question.answer}</span>
+      </>
+    )
+  }
+  return <>{question.note}</>
 }
 
-function optionKind(art: string): string {
-  if (art.startsWith('txt:')) return 'option-text'
-  if (art.startsWith('pair:')) return 'option-pair'
-  return 'option-picture'
+/** Letters and words are set in the reading font; pictures are emoji. */
+export function optionKind(art: string): string {
+  return art.startsWith('txt:') ? 'option-text' : 'option-picture'
 }
 
-/** A word with one letter missing: its neighbours keep their joined shapes around a dashed slot. */
-function GapWord({ letters, index, filled }: { letters: string[]; index: number; filled: boolean }) {
-  const pieces = joinedPieces(letters)
+/** A hand-drawn ring, like the pen circle on a marked test paper. */
+function InkRing({ tone }: { tone: 'good' | 'miss' }) {
   return (
-    <span className="gap-word" dir="rtl" aria-hidden="true">
-      <span>{pieces.slice(0, index).join('')}</span>
-      <span className={`gap-slot ${filled ? 'is-filled pop' : ''}`}>{filled ? pieces[index] : '\u00a0'}</span>
-      <span>{pieces.slice(index + 1).join('')}</span>
-    </span>
+    <svg className={`ink-ring ink-${tone}`} viewBox="0 0 120 100" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M58 7 C 24 6, 4 24, 6 50 C 8 79, 34 95, 64 94 C 96 93, 115 74, 114 49 C 113 24, 90 8, 54 9 C 42 10, 32 13, 25 18" pathLength="100" />
+    </svg>
   )
 }
 
-interface MatchBoardProps {
-  question: Question
-  locked: boolean
-  onFirst: (pair: Pair) => void
-  onHit: () => void
-  onMiss: () => void
-  /** The pictures were tapped before choosing a letter. */
-  onFirstColumnFirst: () => void
-  onDone: (mistakes: number, board: HTMLElement | null) => void
-}
-
-interface Line {
-  id: string
-  x1: number
-  y1: number
-  x2: number
-  y2: number
-}
-
-/**
- * The worksheet's «join» exercise. Letters stand in the first column (on the right, where
- * Arabic reading starts) and are chosen first; the pictures answer them.
- */
-function MatchBoard({ question, locked, onFirst, onHit, onMiss, onFirstColumnFirst, onDone }: MatchBoardProps) {
-  const seconds = useMemo(() => {
-    // Never leave every picture directly opposite its letter.
-    let order = shuffle(question.pairs)
-    for (let tries = 0; tries < 6 && order.every((pair, n) => pair.id === question.pairs[n]!.id); tries += 1) order = shuffle(question.pairs)
-    return order
-  }, [question])
-  const [selected, setSelected] = useState<string | null>(null)
-  const [nudge, setNudge] = useState(false)
-  const [matched, setMatched] = useState<string[]>([])
-  const [shaking, setShaking] = useState<string[]>([])
-  const [mistakes, setMistakes] = useState(0)
-  const [lines, setLines] = useState<Line[]>([])
-  const boardRef = useRef<HTMLDivElement>(null)
-  const refs = useRef(new Map<string, HTMLButtonElement>())
-
-  useLayoutEffect(() => {
-    function measure() {
-      const board = boardRef.current?.getBoundingClientRect()
-      if (!board) return
-      setLines(
-        matched.flatMap((id) => {
-          const a = refs.current.get(`first-${id}`)?.getBoundingClientRect()
-          const b = refs.current.get(`second-${id}`)?.getBoundingClientRect()
-          if (!a || !b) return []
-          // Join the facing edges, whichever side each column is on.
-          const aRight = a.left > b.left
-          return [
-            {
-              id,
-              x1: (aRight ? a.left + 4 : a.right - 4) - board.left,
-              y1: a.top + a.height / 2 - board.top,
-              x2: (aRight ? b.right - 4 : b.left + 4) - board.left,
-              y2: b.top + b.height / 2 - board.top,
-            },
-          ]
-        }),
-      )
-    }
-    measure()
-    window.addEventListener('resize', measure)
-    return () => window.removeEventListener('resize', measure)
-  }, [matched])
-
-  function chooseFirst(pair: Pair) {
-    if (locked || matched.includes(pair.id)) return
-    onFirst(pair)
-    setSelected(pair.id)
-  }
-
-  function answerSecond(pair: Pair) {
-    if (locked || matched.includes(pair.id)) return
-    if (!selected) {
-      // Start from the letters: point the child back to them.
-      onFirstColumnFirst()
-      setNudge(true)
-      window.setTimeout(() => setNudge(false), 650)
-      return
-    }
-    onHit()
-    if (selected === pair.id) {
-      const done = [...matched, pair.id]
-      setMatched(done)
-      setSelected(null)
-      if (done.length === question.pairs.length) window.setTimeout(() => onDone(mistakes, boardRef.current), 350)
-      return
-    }
-    setMistakes((count) => count + 1)
-    setShaking([`first-${selected}`, `second-${pair.id}`])
-    setSelected(null)
-    onMiss()
-    window.setTimeout(() => setShaking([]), 450)
-  }
-
-  function cell(side: 'first' | 'second', pair: Pair, n: number) {
-    const key = `${side}-${pair.id}`
-    const colour = question.pairs.findIndex((entry) => entry.id === pair.id)
-    const state = matched.includes(pair.id)
-      ? `is-matched match-color-${colour}`
-      : side === 'first' && selected === pair.id
-        ? 'is-selected'
-        : side === 'second' && !selected
-          ? 'is-waiting'
-          : ''
-    const art = side === 'first' ? pair.first : pair.second
-    return (
-      <div key={key} className="match-slot rise" style={order(n + (side === 'second' ? 1 : 0), { '--base-delay': '140ms' })}>
-        <button
-          ref={(node) => {
-            if (node) refs.current.set(key, node)
-            else refs.current.delete(key)
-          }}
-          type="button"
-          className={`match-item match-${side} ${optionKind(art)} ${state} ${shaking.includes(key) ? 'shake' : ''}`}
-          onClick={() => (side === 'first' ? chooseFirst(pair) : answerSecond(pair))}
-          disabled={locked}
-          aria-label={side === 'first' ? pair.label : 'صورة'}
-          aria-pressed={side === 'first' ? selected === pair.id : undefined}
-          data-pair={pair.id}
-          data-side={side}
-        >
-          <span className="option-art" aria-hidden="true">
-            <Art art={art} />
-          </span>
-        </button>
-      </div>
-    )
-  }
-
+/** A word with one letter missing: its neighbours keep their joined shapes around a dashed box. */
+function GapWord({ word, index, filled, tone }: { word: string; index: number; filled: string | null; tone: 'good' | 'miss' | null }) {
+  const letters = lettersOf(word)
+  // The written letter takes the shape it has in the word.
+  const pieces = joinedPieces(filled ? letters.map((char, n) => (n === index ? filled : char)) : letters)
   return (
-    <div ref={boardRef} className="match-board" dir="rtl">
-      <svg className="match-lines" aria-hidden="true">
-        {lines.map((line) => (
-          <line
-            key={line.id}
-            className={`match-line match-color-${question.pairs.findIndex((pair) => pair.id === line.id)}`}
-            x1={line.x1}
-            y1={line.y1}
-            x2={line.x2}
-            y2={line.y2}
-          />
-        ))}
-      </svg>
-      <div className={`match-column match-column-first ${nudge ? 'nudge' : ''}`}>{question.pairs.map((pair, n) => cell('first', pair, n))}</div>
-      <div className="match-column">{seconds.map((pair, n) => cell('second', pair, n))}</div>
-    </div>
+    <span className="gap-word pop" dir="rtl" role="img" aria-label={filled ? word : 'كلمة ناقصها حرف'}>
+      <span>{pieces.slice(0, index).join('')}</span>
+      <span className={`gap-slot ${filled ? `is-filled is-${tone}` : ''}`}>{filled ? pieces[index] : ' '}</span>
+      <span>{pieces.slice(index + 1).join('')}</span>
+    </span>
   )
 }

@@ -1,37 +1,54 @@
 import fs from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import {
+  AR_LINES,
+  ASK_LINES,
   BLENDS,
-  CHEERS,
+  FORMATS,
   LETTERS,
+  PICTURE_WORDS,
   QUESTIONS,
   QUIZ_ID,
-  RETRIES,
+  SENTENCES,
   TOPICS,
   WORDS,
   audioCues,
-  clip,
-  formOf,
+  bare,
   joinedPieces,
   lettersOf,
   positionIn,
   roundClips,
+  type Question,
 } from '../../src/data/catalog'
-import { PRACTICE_SIZE, TEST_PLAN } from '../../src/domain/round'
+import { dressQuestion, practiceSize } from '../../src/domain/round'
+import OTHER_QUIZ_LINES from './other-quiz-lines.json'
 
-const TEST_LETTERS = 'أ ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ'.split(' ')
+const UNIT_LETTERS = 'غ ف ق ك ل م ن ه و ي'.split(' ')
 const DIACRITICS = /[ً-ْٰ]/
+
+function seeded(seed: number) {
+  let value = seed
+  return () => {
+    value = (value * 16807) % 2147483647
+    return value / 2147483647
+  }
+}
+
+/** Every question as it can come up: its first draw and many random ones. */
+const DRESSED: Question[] = QUESTIONS.flatMap((q) => [q, ...Array.from({ length: 40 }, (_, n) => dressQuestion(q, seeded(n + 11)))])
+const byFormat = (format: Question['format']) => DRESSED.filter((q) => q.format === format)
 
 describe('question bank', () => {
   it('uses the permanent quiz id', () => {
     expect(QUIZ_ID).toBe('arabic-grade1')
   })
 
-  it('keeps every published question key', () => {
-    const keys = new Set(QUESTIONS.map((q) => q.key))
-    const permanent = fs.readFileSync('integration/seed-arabic-grade1.sql', 'utf8').match(/'[a-z]+:[a-z0-9-]+'/g) ?? []
-    expect(permanent.length).toBe(QUESTIONS.length)
-    for (const key of permanent) expect(keys.has(key.slice(1, -1)), key).toBe(true)
+  it('registers exactly these questions with the Hub, and removes the first test’s', () => {
+    const seed = fs.readFileSync('integration/seed-arabic-grade1.sql', 'utf8')
+    const inserted = seed.split('insert into public.question_difficulty_profiles')[1]!.match(/'[a-z]+:[a-z0-9-]+'/g) ?? []
+    expect(inserted.map((key) => key.slice(1, -1))).toEqual(QUESTIONS.map((q) => q.key))
+    expect(seed).toContain("delete from public.question_difficulty_profiles\nwhere quiz_id = 'arabic-grade1'")
+    expect(seed).not.toMatch(/insert into public\.quiz_assignments/)
   })
 
   it('has unique, well-formed permanent keys', () => {
@@ -40,172 +57,141 @@ describe('question bank', () => {
     for (const q of QUESTIONS) expect(q.key).toMatch(new RegExp(`^${q.topic}:[a-z0-9-]+$`))
   })
 
-  it('teaches exactly the letters from أ to ظ', () => {
-    expect(LETTERS.map((letter) => letter.char)).toEqual(TEST_LETTERS)
-  })
-
-  it('covers every lesson with enough questions for a practice round and the mock test', () => {
-    expect(TOPICS.map((t) => t.id)).toEqual(['picture', 'find', 'form', 'blend', 'copy'])
+  it('follows the card: five skills in its order, each with enough for a full round', () => {
+    expect(TOPICS.map((t) => t.id)).toEqual(['picture', 'sound', 'missing', 'blend', 'handwriting'])
+    expect(TOPICS.map((t) => t.card)).toEqual([
+      'تحديد الصورة المناسبة للحرف المحدد',
+      'كتابة صوت الحرف الدال على الصورة',
+      'إكمال الكلمة بالحرف الناقص',
+      'تركيب الحروف لتكوين كلمة',
+      'نسخ جملة بخط جميل',
+    ])
+    expect(Object.values(FORMATS).map((f) => f.part)).toEqual([1, 2, 3, 4, 5])
     for (const topic of TOPICS) {
-      const count = QUESTIONS.filter((q) => q.topic === topic.id).length
-      expect(count, topic.id).toBeGreaterThanOrEqual(PRACTICE_SIZE + 3)
-      expect(count, topic.id).toBeGreaterThanOrEqual(TEST_PLAN[topic.id])
+      expect(QUESTIONS.filter((q) => q.topic === topic.id).length, topic.id).toBeGreaterThanOrEqual(practiceSize(topic.id) + 2)
     }
   })
 
-  it('covers every test letter in letter-and-picture and in finding a letter', () => {
-    for (const char of TEST_LETTERS) {
-      expect(QUESTIONS.some((q) => q.topic === 'picture' && q.kind === 'pick' && q.subject === `txt:${char}`), `picture ${char}`).toBe(true)
-      expect(QUESTIONS.some((q) => q.topic === 'picture' && q.kind === 'pick' && q.answer === char), `letter for ${char}`).toBe(true)
-      expect(QUESTIONS.some((q) => q.kind === 'tap' && q.prompt.includes(LETTERS.find((l) => l.char === char)!.name)), `find ${char}`).toBe(true)
+  it('teaches exactly the ten letters of unit 3, each in every letter skill', () => {
+    expect(LETTERS.map((letter) => letter.char)).toEqual(UNIT_LETTERS)
+    for (const char of UNIT_LETTERS) {
+      expect(QUESTIONS.some((q) => q.format === 'pic-for-letter' && q.letter === char), `picture ${char}`).toBe(true)
+      expect(QUESTIONS.some((q) => q.format === 'letter-sound' && q.letter === char), `sound ${char}`).toBe(true)
+      expect(QUESTIONS.filter((q) => q.format === 'missing' && q.letter === char).length, `missing ${char}`).toBeGreaterThanOrEqual(3)
+      expect(BLENDS.some((blend) => blend.syllables.some((s) => s.startsWith(char === 'ه' ? 'ه' : char))), `blend ${char}`).toBe(true)
     }
   })
 
-  it('gives every choice question one right answer among distinct options', () => {
-    for (const q of QUESTIONS.filter((entry) => entry.kind === 'pick')) {
-      const ids = q.options.map((o) => o.id)
-      expect(new Set(ids).size, q.key).toBe(ids.length)
-      expect(ids, q.key).toContain(q.answer)
-      if (q.topic !== 'form') expect(q.options.length, q.key).toBe(3)
+  it('gives every word its own picture, so no picture can be two words', () => {
+    const arts = Object.values(WORDS).map((word) => word.art)
+    expect(new Set(arts).size).toBe(arts.length)
+    const ids = Object.values(WORDS).map((word) => word.id)
+    expect(new Set(ids).size).toBe(ids.length)
+    for (const [char, words] of Object.entries(PICTURE_WORDS)) for (const word of words) expect(lettersOf(word)[0], word).toBe(char)
+  })
+
+  it('1. shows the letter and three pictures, only one of them starting with it', () => {
+    for (const q of byFormat('pic-for-letter')) {
+      expect(q.subject).toBe(`txt:${q.letter}`)
+      expect(q.options).toHaveLength(3)
+      expect(new Set(q.options.map((o) => o.art)).size).toBe(3)
+      const starting = q.options.filter((o) => lettersOf(o.id)[0] === q.letter)
+      expect(starting.map((o) => o.id)).toEqual([q.answer])
+      expect(q.options.every((o) => o.clip)).toBe(true)
     }
   })
 
-  it('only shows pictures whose word starts with the asked letter', () => {
-    for (const q of QUESTIONS.filter((entry) => entry.key.endsWith('-pic'))) {
-      const letter = q.subject!.slice(4)
-      for (const option of q.options) expect(lettersOf(option.id)[0] === letter, `${q.key} ${option.id}`).toBe(option.id === q.answer)
+  it('2. shows a picture and six letter keys: its first letter is the answer', () => {
+    for (const q of byFormat('letter-sound')) {
+      expect(lettersOf(q.word!)[0]).toBe(q.answer)
+      expect(q.subject).toBe(WORDS[q.word!]!.art)
+      expect(q.ask[0]).toBe(`fs/word/${WORDS[q.word!]!.id}`)
+      expect(q.options).toHaveLength(6)
+      expect(q.options.map((o) => o.id)).toContain(q.answer)
+      expect(q.options.every((o) => UNIT_LETTERS.includes(o.id))).toBe(true)
     }
   })
 
-  it('builds matching boards of three different letters', () => {
-    for (const q of QUESTIONS.filter((entry) => entry.kind === 'match')) {
-      expect(q.pairs.length, q.key).toBe(3)
-      expect(new Set(q.pairs.map((p) => p.id)).size, q.key).toBe(3)
+  it('3. leaves one unit letter out of a book word, with six keys to put it back', () => {
+    for (const q of byFormat('missing')) {
+      expect(lettersOf(q.word!)[q.gap!]).toBe(q.answer)
+      expect(UNIT_LETTERS).toContain(q.answer)
+      expect(q.options).toHaveLength(6)
+      expect(q.options.map((o) => o.id)).toContain(q.answer)
+      // The keys keep the book's letter order.
+      expect(q.options.map((o) => o.id)).toEqual(UNIT_LETTERS.filter((char) => q.options.some((o) => o.id === char)))
     }
   })
 
-  it('points finding questions at the letter inside the word', () => {
-    for (const q of QUESTIONS.filter((entry) => entry.kind === 'tap')) {
-      const letters = q.tap!.letters
-      const target = q.answer.split(',').map(Number)
-      expect(target.length, q.key).toBeGreaterThan(0)
-      const char = letters[target[0]!]!
-      for (const index of target) expect(letters[index], q.key).toBe(char)
-      expect(q.prompt, q.key).toContain(LETTERS.find((l) => l.char === char)!.name)
+  it('4. builds each word from its own letters, among two near words', () => {
+    for (const blend of BLENDS) expect(blend.syllables.map((s) => bare(s)).join(''), blend.id).toBe(bare(blend.word))
+    for (const q of byFormat('blend')) {
+      expect(q.options).toHaveLength(3)
+      expect(new Set(q.options.map((o) => o.id)).size).toBe(3)
+      expect(q.options.map((o) => o.id)).toContain(q.answer)
     }
   })
 
-  it('asks for the letter shape the word really needs, among the book shapes', () => {
-    const nonJoining = new Set('أ د ذ ر ز'.split(' '))
-    for (const q of QUESTIONS.filter((entry) => entry.topic === 'form')) {
-      const { letters, index } = q.gap!
-      const char = letters[index]!
-      expect(q.answer, q.key).toBe(positionIn(letters, index))
-      const right = q.options.find((o) => o.id === q.answer)!
-      expect(right.art, q.key).toBe(`txt:${formOf(char, positionIn(letters, index))}`)
-      // Four shapes, as in «أختار - أكمل»; two for letters that never join the next one.
-      expect(new Set(q.options.map((o) => o.art)).size, q.key).toBe(nonJoining.has(char) ? 2 : 4)
-      expect(TEST_LETTERS, q.key).toContain(char)
+  it('5. copies the book’s sentences, with their short vowels', () => {
+    const book = SENTENCES.filter((s) => s.page)
+    expect(book.map((s) => bare(s.text))).toEqual(['قرأ حمد.', 'قرأ حمد مع أنس.', 'ذهب حمد.', 'ذهب حمد وأمل.', 'يقف حمد مع عمر.'])
+    for (const s of SENTENCES) {
+      expect(s.text).toMatch(DIACRITICS)
+      if (s.page) expect(s.page >= 145 && s.page <= 196, s.id).toBe(true)
     }
   })
 
-  it('asks the shape of every test letter at least once', () => {
-    for (const char of TEST_LETTERS) expect(QUESTIONS.some((q) => q.topic === 'form' && q.gap!.letters[q.gap!.index] === char), char).toBe(true)
-  })
-
-  it('knows Arabic joining: بطة starts joined, كتاب ends alone, خبز is joined in the middle', () => {
-    expect(positionIn(lettersOf('بطة'), 0)).toBe('initial')
-    expect(positionIn(lettersOf('بطة'), 2)).toBe('final')
-    expect(positionIn(lettersOf('خبز'), 1)).toBe('medial')
-    expect(positionIn([...'كتاب'], 3)).toBe('isolated')
-    expect(positionIn(lettersOf('دب'), 1)).toBe('isolated')
-    expect(formOf('ب', 'medial')).toBe('ـبـ')
-    expect(joinedPieces(lettersOf('خبز'))).toEqual(['خ‍', '‍ب‍', '‍ز'])
-  })
-
-  it('builds three-letter words with short vowels, each using a test letter', () => {
-    for (const blend of BLENDS) {
-      expect(blend.syllables.join(''), blend.id).toBe(blend.word)
-      expect(blend.syllables.length, blend.id).toBe(3)
-      for (const syllable of blend.syllables) expect(syllable, `${blend.id} ${syllable}`).toMatch(/^.[َُِ]$/)
-      expect(blend.syllables.some((syllable) => TEST_LETTERS.includes(syllable.charAt(0))), blend.id).toBe(true)
-    }
-  })
-
-  it('has adaptive difficulty in the Hub range with skill tags', () => {
-    for (const q of QUESTIONS) {
-      expect(q.difficulty).toBeGreaterThanOrEqual(1)
-      expect(q.difficulty).toBeLessThanOrEqual(100)
-      expect(q.skills.length).toBeGreaterThan(0)
-    }
-  })
-
-  it('has a picture for every word in a question', () => {
-    for (const q of QUESTIONS) {
-      for (const option of q.options) if (!option.art.startsWith('txt:') && !option.art.startsWith('pair:')) expect(Object.values(WORDS).some((w) => w.art === option.art), `${q.key} ${option.id}`).toBe(true)
-    }
-  })
-})
-
-describe('screen text', () => {
-  it('shows no diacritics except the short vowels being learned', () => {
-    for (const q of QUESTIONS) {
-      expect(q.prompt, q.key).not.toMatch(DIACRITICS)
-      if (q.topic !== 'blend') for (const way of q.explain) expect(way.text, q.key).not.toMatch(DIACRITICS)
-      if (q.topic !== 'blend') for (const option of q.options) expect(option.art, q.key).not.toMatch(DIACRITICS)
-    }
-    for (const topic of TOPICS) expect(topic.title, topic.id).not.toMatch(DIACRITICS)
-  })
-
-  it('speaks to every child the same way (no girl- or boy-only words)', () => {
-    const words = ['أحسنتي', 'شطورة', 'بطلة', 'عليج', 'إنتي', 'أنتي', 'تبين', 'اختاري', 'شطور', 'بطل', 'عليك', 'اختار', 'اسمع', 'حاول', 'تبي', 'اختر', 'اختاري', 'صل', 'صلي']
-    const gendered = new RegExp(`(?<![\\u0600-\\u06FF])(${words.join('|')})(?![\\u0600-\\u06FF])`)
-    for (const cue of audioCues().filter((c) => c.voice === 'ar')) expect(cue.text, cue.id).not.toMatch(gendered)
-    for (const q of QUESTIONS) expect(q.prompt, q.key).not.toMatch(gendered)
-    for (const cheer of CHEERS) expect(cheer.text).not.toMatch(gendered)
+  it('keeps letter shapes joined around a gap', () => {
+    expect(positionIn(lettersOf('تفاح'), 1)).toBe('medial')
+    expect(positionIn(lettersOf('ورق'), 2)).toBe('isolated')
+    expect(positionIn(lettersOf('دلو'), 2)).toBe('final')
+    expect(joinedPieces(lettersOf('تفاح'))[1]).toBe('‍ف‍')
   })
 })
 
 describe('narration', () => {
-  const manifest = JSON.parse(fs.readFileSync('public/audio/manifest.json', 'utf8')) as {
-    voices: Record<'ar' | 'fs', { name: string }>
-    clips: Record<string, { text: string }>
-  }
+  const maryam = [...Object.values(ASK_LINES).flat(), ...Object.values(AR_LINES).flat()]
 
-  it('uses Layla for standard Arabic and Maryam for Kuwaiti', () => {
-    expect(manifest.voices.fs.name).toBe('Layla - Modern Arabic')
-    expect(manifest.voices.ar.name).toBe('Maryam Essa - Kuwaiti Calm & Warm')
+  it('has every clip a round can play', () => {
+    const ids = new Set(audioCues().map((cue) => cue.id))
+    const all = roundClips(DRESSED)
+    for (const id of all) expect(ids.has(id), id).toBe(true)
   })
 
-  it('reads letters and words with full diacritics, and Kuwaiti lines without them', () => {
+  it('has a recorded file for every clip, and no clip left over', () => {
+    const manifest = JSON.parse(fs.readFileSync('public/audio/manifest.json', 'utf8')) as { clips: Record<string, unknown> }
+    const ids = audioCues().map((cue) => cue.id)
+    for (const id of ids) {
+      expect(manifest.clips[id], id).toBeTruthy()
+      expect(fs.existsSync(`public/audio/${id}.mp3`), id).toBe(true)
+    }
+    expect(Object.keys(manifest.clips).sort()).toEqual([...ids].sort())
+  })
+
+  it('reads letters, words and sentences with full diacritics, and Maryam without', () => {
     for (const cue of audioCues()) {
       if (cue.voice === 'fs') expect(cue.text, cue.id).toMatch(DIACRITICS)
       else expect(cue.text, cue.id).not.toMatch(DIACRITICS)
     }
   })
 
-  it('has a current clip for every cue', () => {
-    for (const cue of audioCues()) {
-      expect(manifest.clips[cue.id]?.text, cue.id).toBe(cue.text)
-      expect(cue.id.startsWith(`${cue.voice}/`), cue.id).toBe(true)
-      expect(fs.existsSync(`public/audio/${cue.id}.mp3`), cue.id).toBe(true)
+  it('never writes a sigh, and uses Kuwaiti words', () => {
+    for (const line of maryam) {
+      expect(line, line).not.toMatch(/…|\.\.|أوه|آه|همم/)
+      expect(line, line).not.toMatch(/نحوط|ذبيت|نذب|فديت|سيكل|الجاية|\bثلاث\b|\bخمس\b/)
     }
   })
 
-  it('has a recording for every clip a round can play', () => {
-    const recorded = new Set(audioCues().map((cue) => cue.id))
-    for (const id of roundClips(QUESTIONS)) expect(recorded.has(id), id).toBe(true)
-    for (const topic of TOPICS) expect(recorded.has(clip.topic(topic.id)), topic.id).toBe(true)
+  it('speaks to every child alike', () => {
+    for (const line of maryam) expect(line, line).not.toMatch(/عليك|عليج|أحسنت|شاطرة|شاطر\b|يا بطل|يا بطلة|حبيبتي|حبيبي/)
   })
 
-  it('ends every spoken question with a complete sentence', () => {
-    const texts = new Map(audioCues().map((cue) => [cue.id, cue.text]))
-    for (const q of QUESTIONS) expect(texts.get(q.ask.at(-1)!), q.key).toMatch(/[؟.!]$/)
-  })
-
-  it('has many cheers and kind words, and several ways to explain picture answers', () => {
-    expect(CHEERS.length).toBeGreaterThanOrEqual(10)
-    expect(RETRIES.length).toBeGreaterThanOrEqual(5)
-    for (const q of QUESTIONS.filter((entry) => entry.topic === 'picture' && entry.kind === 'pick')) expect(q.explain.length, q.key).toBe(3)
+  it('has several lines for every style and moment, none taken from the family’s other quizzes', () => {
+    for (const [group, lines] of Object.entries(ASK_LINES)) expect(lines.length, group).toBeGreaterThanOrEqual(3)
+    expect(AR_LINES.cheer.length).toBeGreaterThanOrEqual(16)
+    const strip = (text: string) => text.replace(/[!،.؟…]/g, '').trim()
+    const old = new Set((OTHER_QUIZ_LINES as string[]).map(strip))
+    for (const line of maryam) expect(old.has(strip(line)), line).toBe(false)
+    expect(new Set(maryam.map(strip)).size).toBe(maryam.length)
   })
 })

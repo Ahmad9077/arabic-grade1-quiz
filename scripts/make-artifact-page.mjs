@@ -9,7 +9,7 @@ const style = html.match(/<link rel="stylesheet"[^>]*href="\.\/(assets\/[^"]+\.c
 if (!script || !style) throw new Error('Could not find the built script and stylesheet in dist/index.html.')
 
 const page = `<title>اللغة العربية</title>
-<meta name="description" content="نسخة تجريبية لاختبار اللغة العربية للصف الأول: الحروف من أ إلى ظ.">
+<meta name="description" content="نسخة تجريبية للاختبار القصير الثاني في اللغة العربية للصف الأول: الوحدة الثالثة، الحروف غ ف ق ك ل م ن ه و ي.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
